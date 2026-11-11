@@ -1,0 +1,84 @@
+---
+title: "Repository rename and release signing"
+sidebarTitle: "Repository rename (November 2026)"
+icon: "arrow-right-arrow-left"
+description: "What the rename of the Genie repository from automagik-dev/genie to automagik-si/genie changed for release signing, who is affected, and how a host tells."
+---
+
+## What happened
+
+In November 2026 the Genie repository was renamed from `automagik-dev/genie` to `automagik-si/genie`.
+
+Every Genie release is signed by a GitHub Actions workflow, and the signing certificate names the repository the workflow ran in. After the rename, certificates name `automagik-si/genie`. Every check in Genie compared that name with `automagik-dev/genie`: the release pipeline's own verification, `install.sh`, and `genie update` in every installed binary. So:
+
+- The release pipeline stopped at its own verification step, and no release was published under the new name.
+- An installed Genie cannot verify a release signed under the new name.
+
+No published release was changed, withdrawn or replaced. The last releases from before the fix are `v6.261108.1` (stable) and `v6.261109.9` (dev).
+
+## The fix on the project side
+
+**The pin is the repository's numeric ids.** GitHub writes a numeric id for the repository and one for its owner into every signing certificate. A rename changes the name and neither id. A release is now accepted only when its verified certificate carries both:
+
+```text
+source-repository-id:        1030039430
+source-repository-owner-id:  245047546
+```
+
+The name on the certificate may be `automagik-si/genie` or `automagik-dev/genie`, with the same workflow file and branch. Any other name is refused, and so is a certificate without both ids. The OIDC issuer is checked as before. `genie update`, `install.sh` and `scripts/verify-release.sh` all apply this rule, and the release pipeline publishes under `automagik-si/genie` again. [Security and releases](/genie/security/index) lists the full pinned identity.
+
+**Releases with the fix use their own channel manifests.** They read `.well-known/v2/latest.json` and `.well-known/v2/dev.json`, and new releases are published there only.
+
+**The earlier manifests are frozen.** `.well-known/latest.json` and `.well-known/dev.json` stay on `v6.261108.1` (stable) and `v6.261109.9` (dev), the last releases from before the fix. No release changes them again.
+
+## Who is affected
+
+Every Genie installed from a release published before the fix: stable up to `6.261108.1`, dev up to `6.261109.9`. Such a binary reads the two frozen files and accepts only release evidence that names `automagik-dev/genie`, so it cannot verify a release signed under the new name.
+
+A Genie installed from a release that carries the fix is not affected.
+
+## How a host tells
+
+`genie --version` prints `6.261108.1` or lower on stable, `6.261109.9` or lower on dev, and `genie update` reports that the install is up to date while newer releases exist. The output is on stdout and the exit code is 0:
+
+```text
+✔ Already up to date (v6.261108.1, channel stable)
+```
+
+An install older than those versions updates to `6.261108.1` (stable) or `6.261109.9` (dev) first, and then reports the same.
+
+An affected host never sees an error from this, and nothing on it is broken. It stays on that version.
+
+## Moving to the releases after the fix
+
+A host follows the releases published after the fix once it runs a version that carries the fix, installed from the current address shown under [New installs](#new-installs).
+
+## What an affected host should do
+
+<Warning>
+  PLACEHOLDER — this paragraph is to be written by the project owner.
+</Warning>
+
+## New installs
+
+Install from the current address:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/automagik-si/genie/main/install.sh | bash
+```
+
+[Installation](/genie/installation) has the options.
+
+## Check a release yourself
+
+From a clone of `automagik-si/genie`, with `cosign` and `slsa-verifier` installed:
+
+```bash
+scripts/verify-release.sh <tag>
+```
+
+The script verifies the signature and the provenance, then reads the certificate and requires both ids. It accepts the releases from before the rename and the ones after it.
+
+## Report a problem
+
+If `genie update` prints something this page does not cover, open an issue at [automagik-si/genie](https://github.com/automagik-si/genie/issues) with the full output. For a suspected vulnerability, report privately as described in [Security and releases](/genie/security/index#report-a-vulnerability).

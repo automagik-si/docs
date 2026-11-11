@@ -62,7 +62,8 @@
             "group": "Security",
             "pages": [
               "genie/security/index",
-              "genie/incident-response/canisterworm"
+              "genie/incident-response/canisterworm",
+              "genie/incident-response/repository-rename"
             ]
           },
           {
