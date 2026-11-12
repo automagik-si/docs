@@ -1,0 +1,35 @@
+{
+  "about": "Automagik's approved logo set (2026-11-12), copied unchanged. A newer set replaces a file at the same path, with its new SHA-256 here. Never recolour, stretch or redraw one.",
+  "files": [
+    {
+      "path": "public/brand/automagik-lockup-three-colours-cream-header.svg",
+      "inTheSet": "lockups/svg/automagik-lockup-three-colours-cream-header.svg",
+      "sha256": "e8dd0d21e42d7b2722386738972d46432f083895fb2bf00a990ee7588d3561f7"
+    },
+    {
+      "path": "public/brand/icon-512.png",
+      "inTheSet": "favicon/icon-512.png",
+      "sha256": "4b5093fda26231b81851e579600bcf811bb67ea98135aa84b20651c53440b6e1"
+    },
+    {
+      "path": "public/favicon.svg",
+      "inTheSet": "favicon/favicon.svg",
+      "sha256": "3ce36573385e5c18116e894b77b2aea39594a2763cfd911c553265d7b09abbf9"
+    },
+    {
+      "path": "public/favicon.ico",
+      "inTheSet": "favicon/favicon.ico",
+      "sha256": "5a99c83b69d9e3a34483fbc4df15770da82d722e8f2b0ced16cb2cd2a7502a2b"
+    },
+    {
+      "path": "public/apple-touch-icon.png",
+      "inTheSet": "favicon/apple-touch-icon.png",
+      "sha256": "c673e97dd84b5a014bb836c5d384ac8f99a176a2a9731351d8f2a487e2df3492"
+    },
+    {
+      "path": "favicon.png",
+      "inTheSet": "favicon/favicon-32.png",
+      "sha256": "76a8c7ab1c5edcb512d25ec60a11fbe81f1a072b30a127423f210ecc72b4834c"
+    }
+  ]
+}
