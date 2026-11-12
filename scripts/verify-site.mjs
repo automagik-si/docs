@@ -8,7 +8,7 @@
 // root-relative file those pages reference answers 200; _internal paths answer 404;
 // /docs.zip, /llms.txt and /llms-full.txt hold no _internal content and the zip holds one
 // entry per navigation page; the only holocron.so URL in the product landings is the
-// powered-by link; the logo set's files (scripts/brand-files.json) are unchanged in the
+// powered-by link; the approved art (scripts/brand-files.json) is unchanged in the
 // repository and as served, the files they replaced answer 404, and every product landing
 // names the set's favicon.
 //
@@ -213,8 +213,8 @@ async function checkSite(base, docs) {
   return { pages: pages.length, files: files.size, brand }
 }
 
-// The approved logo set's files, as scripts/brand-files.json records them: each is the set's
-// own file, byte for byte, in the repository and as the site serves it. What a file draws is
+// The approved art, as scripts/brand-files.json records it (the logo set's files and the clay
+// Genie pet's sheet): each is the source's own file, byte for byte, in the repository and as the site serves it. What a file draws is
 // pinned only by its digest, so a newer set is a file swap plus that list.
 async function checkBrand(base, docs) {
   const { files } = JSON.parse(fs.readFileSync(path.join(ROOT, 'scripts/brand-files.json'), 'utf8'))
@@ -224,17 +224,17 @@ async function checkBrand(base, docs) {
     try {
       local = sha256(fs.readFileSync(path.join(ROOT, file.path)))
     } catch {
-      return fail(`logo set ${file.path}: missing`)
+      return fail(`brand file ${file.path}: missing`)
     }
-    if (local !== file.sha256) fail(`logo set ${file.path}: sha256 ${local}, expected ${file.sha256}`)
+    if (local !== file.sha256) fail(`brand file ${file.path}: sha256 ${local}, expected ${file.sha256}`)
     const served = `/${file.path.replace(/^public\//, '')}`
     try {
       const res = await request(base, served)
       const got = sha256(Buffer.from(await res.arrayBuffer()))
-      if (res.status !== 200) fail(`logo set ${served}: ${res.status}, expected 200`)
-      else if (got !== file.sha256) fail(`logo set ${served}: served sha256 ${got}, expected ${file.sha256}`)
+      if (res.status !== 200) fail(`brand file ${served}: ${res.status}, expected 200`)
+      else if (got !== file.sha256) fail(`brand file ${served}: served sha256 ${got}, expected ${file.sha256}`)
     } catch (error) {
-      fail(`logo set ${served}: error ${error.cause?.code ?? error.name}`)
+      fail(`brand file ${served}: error ${error.cause?.code ?? error.name}`)
     }
   })
   await pool(RETIRED_FILES, async (pathname) => {
@@ -554,7 +554,7 @@ async function main() {
       ok =
         `${summary.pages} navigation pages 200, ${summary.files} referenced files 200, ` +
         `${INTERNAL_PATHS.length} _internal paths 404, docs.zip/llms clean, holocron.so only in powered-by, ` +
-        `${summary.brand} logo-set files unchanged and served, ${RETIRED_FILES.length} retired files 404`
+        `${summary.brand} brand files unchanged and served, ${RETIRED_FILES.length} retired files 404`
     }
   } finally {
     await preview?.stop()

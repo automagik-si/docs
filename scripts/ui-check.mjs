@@ -67,6 +67,15 @@ const QUIET_MS = 500 // Playwright's networkidle window
 const ENGINES = { chromium, firefox, webkit }
 const PET_PAGES = ['/genie', '/genie/quickstart', '/omni', '/omni/quickstart', '/mikro', '/mikro/quickstart']
 const PET_VISIBLE_MS = 8_000 // the hero hands the Genie over, or the pet shows after 6 s
+// The pet's sheet and the cells its timing file names: each clip's frames, the 16 look
+// directions and the neutral pose.
+const PET_SHEET = '/pet/spritesheet.webp'
+const PET_ATLAS = JSON.parse(fs.readFileSync(path.join(ROOT, 'components/pet/animation.json'), 'utf8'))
+const PET_CELLS = [
+  ['neutral', PET_ATLAS.neutral],
+  ...Object.entries(PET_ATLAS.animations).flatMap(([clip, { frames }]) => frames.map((frame, i) => [`${clip} ${i}`, frame])),
+  ...PET_ATLAS.lookDirections.frames.map((frame, i) => [`look ${i}`, frame]),
+].map(([name, { x, y, w, h }]) => ({ name, x, y, w, h }))
 const DRAWER_MS = 5_000
 const FAILED_MS = 10_000 // the refused request, then the pet's one pass of its failed clip
 const CHAT_PATH = '/holocron-api/chat'
@@ -464,6 +473,28 @@ async function checkPet(browser, base, engine) {
     await reduced.page.locator('.genie-pet.is-visible').waitFor({ timeout: PET_VISIBLE_MS })
     const clip = await reduced.page.locator('.genie-pet').getAttribute('data-clip')
     if (clip !== 'neutral') fail(`/genie with reduced motion: pet data-clip ${clip}, expected neutral`)
+    // The sheet against its timing file: the atlas's size, and a figure in every cell the file
+    // names. A newer sheet is a file swap, and a cell left empty would be a pet that vanishes.
+    const sheet = await reduced.page.evaluate(async ({ src, cells }) => {
+      const image = new Image()
+      image.src = src
+      await image.decode()
+      const canvas = document.createElement('canvas')
+      canvas.width = image.naturalWidth
+      canvas.height = image.naturalHeight
+      const pen = canvas.getContext('2d', { willReadFrequently: true })
+      pen.drawImage(image, 0, 0)
+      const empty = cells.filter(({ x, y, w, h }) => {
+        const pixels = pen.getImageData(x, y, w, h).data
+        let solid = 0
+        for (let at = 3; at < pixels.length; at += 4) if (pixels[at] > 127) solid++
+        return solid < w * h * 0.05
+      })
+      return { size: `${image.naturalWidth} x ${image.naturalHeight}`, empty: empty.map((cell) => cell.name) }
+    }, { src: PET_SHEET, cells: PET_CELLS })
+    const atlas = `${PET_ATLAS.atlas.width} x ${PET_ATLAS.atlas.height}`
+    if (sheet.size !== atlas) fail(`${PET_SHEET}: ${sheet.size}, the timing file says ${atlas}`)
+    if (sheet.empty.length) fail(`${PET_SHEET}: no figure in ${sheet.empty.length} of ${PET_CELLS.length} cells the timing file names: ${sheet.empty.join(', ')}`)
   } catch (error) {
     fail(`/genie with reduced motion: ${error.message.split('\n')[0]}`)
   } finally {
@@ -496,7 +527,7 @@ async function checkPet(browser, base, engine) {
   }
   await checkNotFoundPet(browser, base, engine, NOT_FOUND_PAGES[0], MOBILE, false)
 
-  return `pet ${PET_PAGES.length} pages, reduced motion, failed pose, 404 shell with the pet on ${NOT_FOUND_PAGES.length} routes`
+  return `pet ${PET_PAGES.length} pages, reduced motion, ${PET_CELLS.length} sheet cells drawn, failed pose, 404 shell with the pet on ${NOT_FOUND_PAGES.length} routes`
 }
 
 // A route with no page: holocron's not-found document, and in it the pet. Spiceflow renders only
