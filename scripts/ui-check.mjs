@@ -27,7 +27,8 @@
 // the product's logo on the site's own origin, which answers 200 with the PNG in public/brand/;
 // no meta tag points at the chat gateway, and the page's RSC payload carries none of the HTML
 // rewrites. The products group, on the deep pages: the header logos differ pairwise and the
-// footer's (AUTOMAGIK) differs from Genie's, no header, footer or switcher logo carries a
+// footer's (Automagik's lockup) differs from Genie's, the footer's lockup and the header's on
+// Automagik's pages are the logo set's file drawn in its own proportions, no header, footer or switcher logo carries a
 // filter, the native "Select section" pill is hidden and one logo menu shows instead, listing
 // every product by its logo with the current one selected; once React has taken over the head,
 // the live document holds exactly one og:image and one twitter:image, on the product's logo;
@@ -54,7 +55,7 @@ import net from 'node:net'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { chromium, firefox, webkit } from 'playwright'
-import { productLogo } from '../components/product-assets.mjs'
+import { AUTOMAGIK_LOCKUP, productLogo } from '../components/product-assets.mjs'
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const SHOTS = path.join(ROOT, '.ui-check')
@@ -591,6 +592,12 @@ async function checkFailedPose(page, engine, where, currentSlug, shot) {
 const SWITCHER = '.slot-navbar .genie-switcher'
 const SWITCHER_MS = 20_000
 const HEADER_LOGO = '.slot-logo img'
+// Width over height of the lockup, from the file's own viewBox.
+const LOCKUP_RATIO = (() => {
+  const svg = fs.readFileSync(path.join(ROOT, 'public', AUTOMAGIK_LOCKUP), 'utf8')
+  const [, , width, height] = svg.match(/\bviewBox="([^"]+)"/)[1].trim().split(/[\s,]+/).map(Number)
+  return width / height
+})()
 const FOOTER_LOGO = 'footer img[src$="/brand/genie-logo.png"]'
 const SWAP_MS = 5_000
 
@@ -642,10 +649,16 @@ async function checkProductPage(browser, base, engine, product, shots) {
       ({ header, footer }) => {
         const shown = (el) => el.getClientRects().length > 0 && getComputedStyle(el).visibility !== 'hidden'
         const filter = (el) => (el ? getComputedStyle(el).filter : 'missing')
+        const drawn = (el) => {
+          if (!el) return null
+          const box = el.getBoundingClientRect()
+          return { content: getComputedStyle(el).content, width: box.width, height: box.height }
+        }
         return {
           product: document.documentElement.getAttribute('data-product'),
           header: filter(document.querySelector(header)),
           footer: filter(document.querySelector(footer)),
+          lockups: { header: drawn(document.querySelector(header)), footer: drawn(document.querySelector(footer)) },
           switcher: [...document.querySelectorAll('.genie-switcher img')].map(filter),
           pills: [...document.querySelectorAll('.slot-navbar select[aria-label="Select section"]')].filter(shown).length,
           switchers: [...document.querySelectorAll('.slot-navbar .genie-switcher')].filter(shown).length,
@@ -660,6 +673,16 @@ async function checkProductPage(browser, base, engine, product, shots) {
     if (seen.switcher.length === 0 || filtered.length) fail(`${where}: switcher logo filters ${seen.switcher.join(', ') || 'none found'}, expected none`)
     if (seen.pills !== 0) fail(`${where}: the native Select section pill shows`)
     if (seen.switchers !== 1) fail(`${where}: ${seen.switchers} header logo menus show, expected 1`)
+    // Automagik's lockup: the footer's on every page and the header's on Automagik's own pages
+    // are the logo set's file, drawn in the file's own proportions.
+    for (const place of product.slug === 'automagik' ? ['header', 'footer'] : ['footer']) {
+      const lockup = seen.lockups[place]
+      if (!lockup?.content.includes(AUTOMAGIK_LOCKUP)) {
+        fail(`${where}: ${place} logo content ${lockup?.content ?? 'missing'}, expected ${AUTOMAGIK_LOCKUP}`)
+      } else if (!(lockup.height > 0) || Math.abs(lockup.width / lockup.height / LOCKUP_RATIO - 1) > 0.01) {
+        fail(`${where}: ${place} logo drawn ${lockup.width} x ${lockup.height}, expected ${LOCKUP_RATIO.toFixed(3)} to 1`)
+      }
+    }
     await checkShareImages(page, where, product)
     await page.screenshot({ path: path.join(SHOTS, `${engine}-products-${product.slug}.png`) })
     shots.header.set(product.slug, await page.locator(HEADER_LOGO).screenshot())

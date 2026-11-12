@@ -373,17 +373,19 @@ img[src$="/brand/genie-logo.png"] {
 /* ---------- product logos (components/product-brand.tsx + the head script in src/server.tsx) ----------
    Each product uses its supplied artwork in public/brand/. html[data-product] is set
    before first paint from the URL prefix,
-   so the header shows the right product with no flash. AUTOMAGIK, the site brand, signs
-   the footer. None of them is ever inverted (holocron adds dark:invert to the logo img). */
+   so the header shows the right product with no flash. Automagik, the site brand, signs
+   the footer. None of them is ever inverted (holocron adds dark:invert to the logo img).
+   Automagik's is the approved logo set's lockup for small sizes, cream letters for this dark
+   site, copied unchanged (scripts/brand-files.json pins it). */
 /* holocron-internal: logo-omni */
 html[data-product="omni"] .slot-logo img { content: url(/brand/omni-logo.png); }
 /* holocron-internal: logo-mikro */
 html[data-product="mikro"] .slot-logo img { content: url(/brand/mikro-logo.png); }
-html[data-product="automagik"] .slot-logo img { content: url(/brand/automagik-logo.png); }
+html[data-product="automagik"] .slot-logo img { content: url(/brand/automagik-lockup-three-colours-cream-header.svg); }
 html[data-product="arca"] .slot-logo img {
   content: url(/brand/arca-icon-ivory.svg); width: 32px; height: 32px;
 }
-footer img[src$="/brand/genie-logo.png"] { content: url(/brand/automagik-logo.png); }
+footer img[src$="/brand/genie-logo.png"] { content: url(/brand/automagik-lockup-three-colours-cream-header.svg); }
 .genie-switcher img { filter: none !important; mix-blend-mode: normal !important; opacity: 1 !important; }
 
 /* holocron's native text <select> pill, once product-brand.tsx has replaced it */

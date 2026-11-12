@@ -8,7 +8,9 @@
 // root-relative file those pages reference answers 200; _internal paths answer 404;
 // /docs.zip, /llms.txt and /llms-full.txt hold no _internal content and the zip holds one
 // entry per navigation page; the only holocron.so URL in the product landings is the
-// powered-by link.
+// powered-by link; the logo set's files (scripts/brand-files.json) are unchanged in the
+// repository and as served, the files they replaced answer 404, and every product landing
+// names the set's favicon.
 //
 // One of two flags runs a chat check instead:
 //   --chat-guard      the site's guard on POST /holocron-api/chat (src/chat-guard.ts): a 70 KB
@@ -31,6 +33,7 @@
 // Node 22 or later, no dependencies; `unzip` must be on PATH.
 
 import { execFileSync, spawn } from 'node:child_process'
+import crypto from 'node:crypto'
 import fs from 'node:fs'
 import http from 'node:http'
 import https from 'node:https'
@@ -49,6 +52,8 @@ const INTERNAL_PATHS = [
   '/genie/_internal/observability/detectors.mdx',
   '/genie/images/_internal/',
 ]
+// The pictures the approved logo set replaced.
+const RETIRED_FILES = ['/brand/automagik-logo.png', '/brand/genie-favicon.png']
 const productLandings = (docs) => docs.navigation.products.map((product) =>
   hrefOf(product.groups[0].pages[0]))
 const CHAT_BODY_LIMIT = 65_536 // src/chat-guard.ts
@@ -203,7 +208,49 @@ async function checkSite(base, docs) {
     if (!poweredBy.some((url) => html.includes(`href="${url}"`))) fail(`landing ${landing}: powered-by link missing`)
   }
 
-  return { pages: pages.length, files: files.size }
+  const brand = await checkBrand(base, docs)
+
+  return { pages: pages.length, files: files.size, brand }
+}
+
+// The approved logo set's files, as scripts/brand-files.json records them: each is the set's
+// own file, byte for byte, in the repository and as the site serves it. What a file draws is
+// pinned only by its digest, so a newer set is a file swap plus that list.
+async function checkBrand(base, docs) {
+  const { files } = JSON.parse(fs.readFileSync(path.join(ROOT, 'scripts/brand-files.json'), 'utf8'))
+  const sha256 = (bytes) => crypto.createHash('sha256').update(bytes).digest('hex')
+  await pool(files, async (file) => {
+    let local
+    try {
+      local = sha256(fs.readFileSync(path.join(ROOT, file.path)))
+    } catch {
+      return fail(`logo set ${file.path}: missing`)
+    }
+    if (local !== file.sha256) fail(`logo set ${file.path}: sha256 ${local}, expected ${file.sha256}`)
+    const served = `/${file.path.replace(/^public\//, '')}`
+    try {
+      const res = await request(base, served)
+      const got = sha256(Buffer.from(await res.arrayBuffer()))
+      if (res.status !== 200) fail(`logo set ${served}: ${res.status}, expected 200`)
+      else if (got !== file.sha256) fail(`logo set ${served}: served sha256 ${got}, expected ${file.sha256}`)
+    } catch (error) {
+      fail(`logo set ${served}: error ${error.cause?.code ?? error.name}`)
+    }
+  })
+  await pool(RETIRED_FILES, async (pathname) => {
+    const code = await status(base, pathname)
+    if (code !== 404) fail(`retired ${pathname}: ${code}, expected 404`)
+    if (fs.existsSync(path.join(ROOT, 'public', pathname))) fail(`retired ${pathname}: still in public/`)
+  })
+  if (docs.favicon !== '/favicon.svg') fail(`docs.json: favicon ${docs.favicon}, expected /favicon.svg`)
+  for (const landing of productLandings(docs)) {
+    const { body } = await text(base, landing)
+    const icons = [...body.matchAll(/<link\b[^>]*\brel="(?:shortcut )?icon"[^>]*>/g)].map((match) => match[0])
+    if (icons.length === 0 || !icons.every((icon) => /\bhref="\/favicon\.svg"/.test(icon))) {
+      fail(`landing ${landing}: icon links ${JSON.stringify(icons)}, expected /favicon.svg`)
+    }
+  }
+  return files.length
 }
 
 async function checkZip(base, pages) {
@@ -506,7 +553,8 @@ async function main() {
       const summary = await checkSite(base, docs)
       ok =
         `${summary.pages} navigation pages 200, ${summary.files} referenced files 200, ` +
-        `${INTERNAL_PATHS.length} _internal paths 404, docs.zip/llms clean, holocron.so only in powered-by`
+        `${INTERNAL_PATHS.length} _internal paths 404, docs.zip/llms clean, holocron.so only in powered-by, ` +
+        `${summary.brand} logo-set files unchanged and served, ${RETIRED_FILES.length} retired files 404`
     }
   } finally {
     await preview?.stop()
