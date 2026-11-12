@@ -322,7 +322,10 @@ async function checkLanding(browser, base, engine, pathname, codeFonts) {
       const code = document.querySelector('pre code')
       const header = document.querySelector('.slot-logo img')
       const footer = document.querySelector('footer img[src$="/brand/genie-logo.png"]')
+      const title = document.querySelector('h1')
       return {
+        title: title ? { font: getComputedStyle(title).fontFamily, weight: getComputedStyle(title).fontWeight } : null,
+        titleFace: [...document.fonts].some((face) => face.family.replaceAll('"', '') === 'Fredoka' && face.status === 'loaded'),
         background: body.backgroundColor,
         text: body.color,
         font: body.fontFamily,
@@ -335,6 +338,13 @@ async function checkLanding(browser, base, engine, pathname, codeFonts) {
     if (seen.background !== BRAND.background) fail(`${pathname}: body background ${seen.background}, expected ${BRAND.background}`)
     if (seen.text !== BRAND.text) fail(`${pathname}: body color ${seen.text}, expected ${BRAND.text}`)
     if (!/^"?Geist"?(,|$)/.test(seen.font)) fail(`${pathname}: body font-family ${seen.font}, expected Geist first`)
+    // Titles are in the brand's face at the logo letters' weight, and the face is the served file, not a fallback.
+    if (!seen.title) fail(`${pathname}: no <h1>`)
+    else {
+      if (!/^"?Fredoka"?(,|$)/.test(seen.title.font)) fail(`${pathname}: h1 font-family ${seen.title.font}, expected Fredoka first`)
+      if (seen.title.weight !== '536') fail(`${pathname}: h1 font-weight ${seen.title.weight}, expected 536`)
+      if (!seen.titleFace) fail(`${pathname}: Fredoka did not load`)
+    }
     if (seen.code !== null) {
       codeFonts.push(pathname)
       // WebKit serializes family names without quotes, as the body check above allows.
