@@ -1,5 +1,5 @@
 {
-  "about": "Automagik's approved art, copied unchanged: the logo set (2026-11-12) and the clay Genie pet's sheet from the app. A newer one replaces a file at the same path, with its new SHA-256 here. Never recolour, stretch or redraw one.",
+  "about": "Automagik's approved art, copied unchanged: the logo set (2026-11-12), the title font and its licence from the brand folder (automagik-si/automagik, docs/brand), and the clay Genie pet's sheet from the app. A newer one replaces a file at the same path, with its new SHA-256 here. Never recolour, stretch or redraw one.",
   "files": [
     {
       "path": "public/brand/automagik-lockup-three-colours-cream-header.svg",
@@ -40,6 +40,16 @@
       "path": "favicon.png",
       "inTheSet": "favicon/favicon-32.png",
       "sha256": "76a8c7ab1c5edcb512d25ec60a11fbe81f1a072b30a127423f210ecc72b4834c"
+    },
+    {
+      "path": "public/fonts/fredoka-latin.woff2",
+      "inTheSet": "fonts/fredoka-latin.woff2",
+      "sha256": "d1ceb16007127919aa1900fb85e4b5d612a4f242404a4068d43f3bc628b2aeca"
+    },
+    {
+      "path": "public/fonts/OFL-Fredoka.txt",
+      "inTheSet": "fonts/OFL-Fredoka.txt",
+      "sha256": "5c9e7eee5c6b25f4b05b8d53b2e470ea4962f9ced742d044a98f7d95d1375bab"
     },
     {
       "path": "public/pet/spritesheet.webp",
