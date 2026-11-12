@@ -371,14 +371,18 @@ img[src$="/brand/genie-logo.png"] {
 .holocron-chat-drawer-messages a[href]:hover { color: var(--gx-magenta) !important; text-shadow: var(--gx-glow-mag); }
 
 /* ---------- product logos (components/product-brand.tsx + the head script in src/server.tsx) ----------
-   Each product uses the Automagik triskele + its wordmark (public/brand/*-logo.png, trimmed
-   copies of the drops). html[data-product] is set before first paint from the URL prefix,
+   Each product uses its supplied artwork in public/brand/. html[data-product] is set
+   before first paint from the URL prefix,
    so the header shows the right product with no flash. AUTOMAGIK, the site brand, signs
    the footer. None of them is ever inverted (holocron adds dark:invert to the logo img). */
 /* holocron-internal: logo-omni */
 html[data-product="omni"] .slot-logo img { content: url(/brand/omni-logo.png); }
 /* holocron-internal: logo-mikro */
 html[data-product="mikro"] .slot-logo img { content: url(/brand/mikro-logo.png); }
+html[data-product="automagik"] .slot-logo img { content: url(/brand/automagik-logo.png); }
+html[data-product="arca"] .slot-logo img {
+  content: url(/brand/arca-icon-ivory.svg); width: 32px; height: 32px;
+}
 footer img[src$="/brand/genie-logo.png"] { content: url(/brand/automagik-logo.png); }
 .genie-switcher img { filter: none !important; mix-blend-mode: normal !important; opacity: 1 !important; }
 
@@ -427,3 +431,6 @@ html[data-product="genie"] .genie-docs-version { display: inline-flex; }
   background: var(--gx-magenta); box-shadow: 0 0 10px rgba(255, 63, 245, .6);
 }
 .genie-switcher__logo { display: block; height: 22px; width: auto; } /* equal heights = aligned triskeles */
+.genie-switcher__description {
+  max-width: 220px; margin-left: 10px; color: var(--gx-head); font-size: 12px;
+}

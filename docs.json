@@ -26,6 +26,31 @@
   "navigation": {
     "products": [
       {
+        "product": "Automagik",
+        "icon": "cubes",
+        "description": "Your team of AI helpers",
+        "groups": [
+          {
+            "group": "Getting started",
+            "pages": [
+              "automagik/index",
+              "automagik/products",
+              "automagik/getting-started"
+            ]
+          },
+          {
+            "group": "Install",
+            "pages": [
+              "automagik/install/mac",
+              "automagik/install/linux",
+              "automagik/install/android",
+              "automagik/install/herdr",
+              "automagik/install/dsh"
+            ]
+          }
+        ]
+      },
+      {
         "product": "Genie",
         "icon": "wand-magic-sparkles",
         "description": "Agent orchestration CLI",
@@ -148,6 +173,19 @@
             ]
           }
         ]
+      },
+      {
+        "product": "Arca",
+        "icon": "/brand/arca-icon-small-ivory.svg",
+        "description": "Be your own cloud. Infrastructure for AI agents.",
+        "groups": [
+          {
+            "group": "Arca",
+            "pages": [
+              "arca/index"
+            ]
+          }
+        ]
       }
     ]
   },
@@ -164,14 +202,13 @@
       }
     ],
     "primary": {
-      "type": "github",
-      "href": "https://github.com/automagik-dev/genie"
+      "label": "Get started",
+      "href": "/automagik/getting-started"
     }
   },
   "footer": {
     "socials": {
       "x": "https://x.com/automagik_dev",
-      "github": "https://github.com/automagik-dev",
       "discord": "https://discord.gg/automagik"
     }
   },
@@ -179,6 +216,7 @@
     "enabled": true,
     "display": "sidebar",
     "suggestions": [
+      "How do I install Automagik?",
       "How do I install Genie?",
       "How do I send a message with Omni?",
       "What does mikro do?"
@@ -191,7 +229,7 @@
   "redirects": [
     {
       "source": "/",
-      "destination": "/genie",
+      "destination": "/automagik",
       "permanent": false
     }
   ]

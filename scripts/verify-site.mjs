@@ -49,7 +49,8 @@ const INTERNAL_PATHS = [
   '/genie/_internal/observability/detectors.mdx',
   '/genie/images/_internal/',
 ]
-const LANDINGS = ['/genie', '/omni', '/mikro']
+const productLandings = (docs) => docs.navigation.products.map((product) =>
+  hrefOf(product.groups[0].pages[0]))
 const CHAT_BODY_LIMIT = 65_536 // src/chat-guard.ts
 const CHAT_TOO_LONG = 'Your question is too long. Please shorten it and ask again.'
 const CHAT_UNANSWERABLE = 'This request cannot be answered.'
@@ -154,6 +155,13 @@ async function checkSite(base, docs) {
   const pages = navigationPages(docs)
   if (pages.length === 0) fail('docs.json: no navigation pages found')
   const files = new Map() // url -> first page that references it
+  const home = await request(base, '/')
+  const destination = docs.redirects.find((redirect) => redirect.source === '/')?.destination
+  if (![301, 302, 307, 308].includes(home.status) ||
+      new URL(home.headers.get('location') ?? '/', base).pathname !== destination) {
+    fail(`root: ${home.status} ${home.headers.get('location')}, expected ${destination}`)
+  }
+  await home.body?.cancel()
 
   await pool(pages, async (page) => {
     const href = hrefOf(page)
@@ -181,7 +189,7 @@ async function checkSite(base, docs) {
   }
 
   const poweredBy = [docs.poweredBy ?? []].flat().map((link) => link.url)
-  for (const landing of LANDINGS) {
+  for (const landing of productLandings(docs)) {
     const { status: code, body } = await text(base, landing)
     if (code !== 200) {
       fail(`landing ${landing}: ${code}, expected 200`)

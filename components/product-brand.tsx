@@ -17,9 +17,10 @@
 //   - replaces each "Select section" <select> with a logo menu that navigates with
 //     spiceflow's router.push, the call holocron's NavSelect makes on change.
 // Products, labels and hrefs are read from holocron's own <select> options, so the menu
-// follows docs.json. Logos: public/brand/<product>-logo.png, trimmed copies of the drops.
+// follows docs.json. product-assets.mjs selects each product's supplied artwork.
 import { router } from 'spiceflow/react'
 import { afterHydration, hydrated } from './hydration.ts'
+import { productLogo, productMenuLogo } from './product-assets.mjs'
 
 type Product = { href: string; label: string; slug: string; logo: string }
 type BrandWindow = Window & {
@@ -34,7 +35,7 @@ const GENIE_DOCS_VERSION = '6.261003.1'
 function productsFrom(select: HTMLSelectElement): Product[] {
   return [...select.options].map((o) => {
     const slug = o.text.trim().toLowerCase()
-    return { href: o.value, label: o.text.trim(), slug, logo: `/brand/${slug}-logo.png` }
+    return { href: o.value, label: o.text.trim(), slug, logo: productMenuLogo(slug) }
   })
 }
 function activeOf(products: Product[], pathname = location.pathname): Product {
@@ -75,7 +76,7 @@ const SHARE_IMAGES = 'meta[property="og:image"], meta[name="twitter:image"]'
 function syncShareImages(slug: string) {
   const metas = [...document.head.querySelectorAll<HTMLMetaElement>(SHARE_IMAGES)]
   if (!metas.some(hydrated)) return // before hydration the server's tags are the right ones
-  const logo = new URL(`/brand/${slug}-logo.png`, location.origin).href
+  const logo = new URL(productLogo(slug), location.origin).href
   for (const meta of metas) {
     if (!hydrated(meta)) meta.remove()
     else if (meta.getAttribute('content') !== logo) meta.setAttribute('content', logo)
@@ -124,9 +125,15 @@ export function mountProductBrand(): () => void {
       li.dataset.href = p.href
       const img = document.createElement('img')
       img.src = p.logo
-      img.alt = p.label // the accessible name stays "Genie", "Omni", "mikro"
+      img.alt = p.label
       img.className = 'genie-switcher__logo'
       li.append(img)
+      if (p.slug === 'arca') {
+        const caption = document.createElement('span')
+        caption.className = 'genie-switcher__description'
+        caption.textContent = 'Arca — Be your own cloud. Infrastructure for AI agents.'
+        li.append(caption)
+      }
       li.addEventListener('click', () => choose(p))
       menu.append(li)
       return li

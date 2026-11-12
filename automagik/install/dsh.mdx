@@ -1,0 +1,60 @@
+---
+title: "Install on DSH"
+description: "Add the Automagik Bot team through DeepSeek Harness's plugin installer."
+---
+
+Already use DeepSeek Harness (DSH)? Add the **Bot team** to that installation.
+You get long-lived Bots, group chats, memory and schedules without installing a second
+Desktop app. DSH manages the plugin installation.
+
+## Install from the plugin market
+
+1. Open your DSH and go to **Settings → Plugins → Plugin market**.
+2. Open **Market → Indexes** and add this Automagik market index:
+
+   ```text
+   https://raw.githubusercontent.com/automagik-si/dsh-marketplace/main/index.json
+   ```
+
+3. Find **Bot team** (`@automagik/bots-dsh`) and choose **Install**. Let DSH choose the
+   version compatible with your DSH release and complete its plugin setup.
+4. Open the Bot team surface. On its first run, the team creates a Main Bot called **Omni**.
+5. Pick a model for your Bot using the AI accounts or providers you have connected in DSH.
+
+The market can offer a different compatible version from the newest Automagik release.
+If it reports that a plugin is incompatible, update DSH or choose a compatible version
+through its installer; do not edit the profile by hand to force an install.
+
+## Install a release file instead
+
+For the newest stable Automagik release checked on 12 November 2026, **v3.129.0**, the team
+file is `automagik-bots-dsh-3.129.0.tgz`.
+This archive requires Node.js **24.9 or newer** and DSH **0.2.2-rc.1 or newer, below 0.3.0**.
+
+1. [Download the Bot team archive][team].
+2. In DSH Desktop, open **Settings → Plugins** and add the downloaded `.tgz` through
+   DSH's plugin installer. You do not need to unpack it or run npm.
+3. Let DSH complete installation, then open the Bot team and confirm the Main Bot appears.
+
+Use the market route when you want DSH to select a compatible release for you.
+
+## Connect chat channels
+
+The Bot team works alone. To connect an Omni's channels, also install **Omni channels**
+(`@automagik/omni-channels-dsh`) from the market. **Omni canvases**
+(`@automagik/omni-canvas-dsh`) adds live views in chats and needs the team and channels.
+
+After installing channels, open **Channels**, enter your Omni's address and choose
+**Get a code**. Scan the QR code and send the prefilled message from your own phone.
+Your Omni must have pairing enabled. [Omni's guide](/omni/quickstart) covers the service.
+
+## Troubleshooting
+
+- **Bot team does not appear in the market:** check that the Automagik index was added
+  and that DSH finished loading it.
+- **No Channels page:** install Omni channels as well as the Bot team.
+- **No Main Bot responses:** check the selected model and its account connection in DSH.
+- **You want a standalone app:** use [Automagik Desktop](/automagik/getting-started) instead.
+
+[team]:
+ https://github.com/automagik-si/automagik/releases/download/v3.129.0/automagik-bots-dsh-3.129.0.tgz

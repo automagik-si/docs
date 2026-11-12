@@ -10,7 +10,7 @@ description: "Public incident-response runbook for the @automagik/genie + pgserv
   **Versão:** 1.0 · 2026-04-23
   **Classificação:** Público — distribuição livre para quem tenha instalado qualquer versão afetada
   **Páginas relacionadas:** [automagik.dev/security](https://automagik.dev/security) (EN) · [automagik.dev/seguranca](https://automagik.dev/seguranca) (PT)
-  **Cópia canônica pública:** [automagik-dev/docs → genie/incident-response/canisterworm.mdx](https://github.com/automagik-dev/docs/blob/main/genie/incident-response/canisterworm.mdx)
+  **Cópia canônica pública:** [CanisterWorm](/genie/incident-response/canisterworm)
 </Info>
 
 ---
@@ -920,7 +920,9 @@ genie sec remediate --apply \
 
 - **"It's faster."** The prompt is the point; verification is the contract.
 - **"The prompt is annoying."** See above.
-- **"I don't have the key locally."** There is no key: the signing identity is a three-value tuple (see [SECURITY.md § Release Signing](https://github.com/automagik-dev/genie/blob/main/SECURITY.md#release-signing--pinned-identity-cosign-keyless)). If `verify-install` exits `5`, use Context 2.
+- **"I don't have the key locally."** There is no key: the signing identity is a three-value tuple
+  (see [Security and releases](/genie/security#the-pinned-identity)). If `verify-install` exits `5`,
+  use Context 2.
 - **"Our release channel is old."** Upgrade. If that is not possible right now, use Context 2 with the correct release-line identifier.
 
 Any `--unsafe-unverified` invocation whose incident id does not map to one of the three legitimate contexts is treated as an incident of its own by post-hoc review.
