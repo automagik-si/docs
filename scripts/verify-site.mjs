@@ -53,7 +53,7 @@ const INTERNAL_PATHS = [
   '/genie/images/_internal/',
 ]
 // The pictures the approved logo set replaced.
-const RETIRED_FILES = ['/brand/automagik-logo.png', '/brand/genie-favicon.png']
+const RETIRED_FILES = ['/brand/automagik-logo.png', '/brand/genie-favicon.png', '/brand/omni-logo.png']
 const productLandings = (docs) => docs.navigation.products.map((product) =>
   hrefOf(product.groups[0].pages[0]))
 const CHAT_BODY_LIMIT = 65_536 // src/chat-guard.ts

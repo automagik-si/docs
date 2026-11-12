@@ -28,8 +28,9 @@
 // no meta tag points at the chat gateway, and the page's RSC payload carries none of the HTML
 // rewrites. The products group, on the deep pages: the header logos differ pairwise and the
 // footer's (Automagik's lockup) differs from Genie's, the footer's lockup and the header's on
-// Automagik's pages are the logo set's file drawn in its own proportions, no header, footer or switcher logo carries a
-// filter, the native "Select section" pill is hidden and one logo menu shows instead, listing
+// Automagik's, Genie's and Omni's pages are the logo set's files drawn in their own
+// proportions and the menu shows the same three files, no header, footer or switcher logo
+// carries a filter, the native "Select section" pill is hidden and one logo menu shows instead, listing
 // every product by its logo with the current one selected; once React has taken over the head,
 // the live document holds exactly one og:image and one twitter:image, on the product's logo;
 // Omni chosen by mouse and then mikro by keyboard navigate without a reload and swap
@@ -55,7 +56,7 @@ import net from 'node:net'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { chromium, firefox, webkit } from 'playwright'
-import { AUTOMAGIK_LOCKUP, productLogo } from '../components/product-assets.mjs'
+import { AUTOMAGIK_LOCKUP, LOCKUPS, productLogo } from '../components/product-assets.mjs'
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const SHOTS = path.join(ROOT, '.ui-check')
@@ -180,6 +181,7 @@ const CANARIES = [
     action: 'none',
   },
   { id: 'logo', selector: '.slot-logo img', page: '/genie', action: 'none' },
+  { id: 'logo-genie', selector: 'html[data-product="genie"] .slot-logo img', page: productPage('genie'), action: 'none' },
   { id: 'logo-omni', selector: 'html[data-product="omni"] .slot-logo img', page: productPage('omni'), action: 'none' },
   { id: 'logo-mikro', selector: 'html[data-product="mikro"] .slot-logo img', page: productPage('mikro'), action: 'none' },
   { id: 'switcher-pill', selector: 'div:has(> select[data-genie-logos])', page: productPage('genie'), action: 'switcher' },
@@ -623,12 +625,12 @@ async function checkFailedPose(page, engine, where, currentSlug, shot) {
 const SWITCHER = '.slot-navbar .genie-switcher'
 const SWITCHER_MS = 20_000
 const HEADER_LOGO = '.slot-logo img'
-// Width over height of the lockup, from the file's own viewBox.
-const LOCKUP_RATIO = (() => {
-  const svg = fs.readFileSync(path.join(ROOT, 'public', AUTOMAGIK_LOCKUP), 'utf8')
+// Width over height of a lockup, from the file's own viewBox.
+const lockupRatio = (file) => {
+  const svg = fs.readFileSync(path.join(ROOT, 'public', file), 'utf8')
   const [, , width, height] = svg.match(/\bviewBox="([^"]+)"/)[1].trim().split(/[\s,]+/).map(Number)
   return width / height
-})()
+}
 const FOOTER_LOGO = 'footer img[src$="/brand/genie-logo.png"]'
 const SWAP_MS = 5_000
 
@@ -691,6 +693,7 @@ async function checkProductPage(browser, base, engine, product, shots) {
           footer: filter(document.querySelector(footer)),
           lockups: { header: drawn(document.querySelector(header)), footer: drawn(document.querySelector(footer)) },
           switcher: [...document.querySelectorAll('.genie-switcher img')].map(filter),
+          menu: [...document.querySelectorAll('.slot-navbar .genie-switcher__logo')].map((img) => [img.alt.toLowerCase(), img.getAttribute('src')]),
           pills: [...document.querySelectorAll('.slot-navbar select[aria-label="Select section"]')].filter(shown).length,
           switchers: [...document.querySelectorAll('.slot-navbar .genie-switcher')].filter(shown).length,
         }
@@ -704,15 +707,22 @@ async function checkProductPage(browser, base, engine, product, shots) {
     if (seen.switcher.length === 0 || filtered.length) fail(`${where}: switcher logo filters ${seen.switcher.join(', ') || 'none found'}, expected none`)
     if (seen.pills !== 0) fail(`${where}: the native Select section pill shows`)
     if (seen.switchers !== 1) fail(`${where}: ${seen.switchers} header logo menus show, expected 1`)
-    // Automagik's lockup: the footer's on every page and the header's on Automagik's own pages
-    // are the logo set's file, drawn in the file's own proportions.
-    for (const place of product.slug === 'automagik' ? ['header', 'footer'] : ['footer']) {
+    // The approved lockups: Automagik's in the footer on every page, and in the header the
+    // product's own (Automagik, Genie, Omni). Each is the logo set's file, drawn in the file's
+    // own proportions; the menu shows the same three files.
+    const own = LOCKUPS[product.slug]
+    for (const [place, file] of [['footer', AUTOMAGIK_LOCKUP], ...(own ? [['header', own]] : [])]) {
       const lockup = seen.lockups[place]
-      if (!lockup?.content.includes(AUTOMAGIK_LOCKUP)) {
-        fail(`${where}: ${place} logo content ${lockup?.content ?? 'missing'}, expected ${AUTOMAGIK_LOCKUP}`)
-      } else if (!(lockup.height > 0) || Math.abs(lockup.width / lockup.height / LOCKUP_RATIO - 1) > 0.01) {
-        fail(`${where}: ${place} logo drawn ${lockup.width} x ${lockup.height}, expected ${LOCKUP_RATIO.toFixed(3)} to 1`)
+      const ratio = lockupRatio(file)
+      if (!lockup?.content.includes(file)) {
+        fail(`${where}: ${place} logo content ${lockup?.content ?? 'missing'}, expected ${file}`)
+      } else if (!(lockup.height > 0) || Math.abs(lockup.width / lockup.height / ratio - 1) > 0.01) {
+        fail(`${where}: ${place} logo drawn ${lockup.width} x ${lockup.height}, expected ${ratio.toFixed(3)} to 1`)
       }
+    }
+    for (const [slug, file] of Object.entries(LOCKUPS)) {
+      const shown = seen.menu.find(([name]) => name === slug)?.[1]
+      if (shown !== file) fail(`${where}: the menu's ${slug} logo is ${shown ?? 'missing'}, expected ${file}`)
     }
     await checkShareImages(page, where, product)
     await page.screenshot({ path: path.join(SHOTS, `${engine}-products-${product.slug}.png`) })

@@ -290,11 +290,13 @@ li[class*="counter-increment"] div[class*="size-7"][class*="rounded-full"] {
   margin-right: .02em;
 }
 
-/* ---------- logo: the official lockup (triskele + GENIE, chromatic split), never restyled ---------- */
-/* genie-logo.png is cropped to its alpha bbox (the same 842x244 crop film.html draws).
-   With light === dark, holocron's <Logo> takes its single-image branch, which adds Tailwind's
-   `dark:invert` (cyan -> red, magenta -> green, white -> black). The lockup is made for dark
-   backgrounds, so cancel every filter, blend and fade on it, in the header and the footer. */
+/* ---------- logo: never restyled ---------- */
+/* docs.json names one logo file, genie-logo.png (the launch film's lockup, which the
+   Introduction hero still draws); the product logos section below shows each product's own
+   artwork in its place. With light === dark, holocron's <Logo> takes its single-image branch,
+   which adds Tailwind's `dark:invert` (cyan -> red, magenta -> green, white -> black). The
+   logos are made for dark backgrounds, so cancel every filter, blend and fade on them, in the
+   header and the footer. */
 /* holocron-internal: logo */
 .slot-logo img,
 img[src$="/brand/genie-logo.png"] {
@@ -375,10 +377,13 @@ img[src$="/brand/genie-logo.png"] {
    before first paint from the URL prefix,
    so the header shows the right product with no flash. Automagik, the site brand, signs
    the footer. None of them is ever inverted (holocron adds dark:invert to the logo img).
-   Automagik's is the approved logo set's lockup for small sizes, cream letters for this dark
-   site, copied unchanged (scripts/brand-files.json pins it). */
+   Automagik's, Genie's and Omni's are the approved logo set's lockups for small sizes: the
+   triskle in colour, cream letters for this dark site, the sparkle in the product's colour,
+   copied unchanged (scripts/brand-files.json pins them). */
+/* holocron-internal: logo-genie */
+html[data-product="genie"] .slot-logo img { content: url(/brand/genie-lockup-three-colours-cream-header.svg); }
 /* holocron-internal: logo-omni */
-html[data-product="omni"] .slot-logo img { content: url(/brand/omni-logo.png); }
+html[data-product="omni"] .slot-logo img { content: url(/brand/omni-lockup-three-colours-cream-header.svg); }
 /* holocron-internal: logo-mikro */
 html[data-product="mikro"] .slot-logo img { content: url(/brand/mikro-logo.png); }
 html[data-product="automagik"] .slot-logo img { content: url(/brand/automagik-lockup-three-colours-cream-header.svg); }
