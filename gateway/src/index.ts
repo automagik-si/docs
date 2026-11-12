@@ -47,6 +47,7 @@ import {
   worstCaseUsd,
 } from './ledger.ts'
 import {
+  ARCA_SYSTEM_RULE,
   DEEPSEEK_ORIGIN,
   dropInternal,
   isAllowedOutbound,
@@ -395,7 +396,7 @@ export function createGateway(deps: GatewayDeps) {
           turn.started = true
           const result = streamText({
             model,
-            system: split.system,
+            system: [split.system, ARCA_SYSTEM_RULE].filter(Boolean).join('\n\n'),
             messages,
             tools: { bash, ...clientTools },
             maxOutputTokens: MAX_OUTPUT_TOKENS,
