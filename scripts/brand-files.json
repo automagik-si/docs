@@ -1,5 +1,5 @@
 {
-  "about": "Automagik's approved logo set (2026-11-12), copied unchanged. A newer set replaces a file at the same path, with its new SHA-256 here. Never recolour, stretch or redraw one.",
+  "about": "Automagik's approved art, copied unchanged: the logo set (2026-11-12) and the clay Genie pet's sheet from the app. A newer one replaces a file at the same path, with its new SHA-256 here. Never recolour, stretch or redraw one.",
   "files": [
     {
       "path": "public/brand/automagik-lockup-three-colours-cream-header.svg",
@@ -30,6 +30,11 @@
       "path": "favicon.png",
       "inTheSet": "favicon/favicon-32.png",
       "sha256": "76a8c7ab1c5edcb512d25ec60a11fbe81f1a072b30a127423f210ecc72b4834c"
+    },
+    {
+      "path": "public/pet/spritesheet.webp",
+      "from": "automagik-si/automagik, apps/bots-dsh/src/host/pets/genie-clay/spritesheet.webp",
+      "sha256": "a627262a7a96206edc30439349e92677e96406c733839c3baa99700ff6ac1a8d"
     }
   ]
 }

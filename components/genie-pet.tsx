@@ -6,12 +6,15 @@
 // put this module on every page; on a 404, where that layout does not render, the module still
 // loads (src/server.tsx says how: the payload in dev, a shared client chunk in production).
 //
-// Art and timing come only from the pet bundle (assets/render/genie-render):
+// Art and timing come only from the pet's two files. The sheet is the app's clay Genie pet
+// (automagik-si/automagik, apps/bots-dsh/src/host/pets/genie-clay), copied unchanged; the
+// timing file names the same cells the app plays:
 //   - spritesheet.webp: 8 x 11 cells of 192 x 208, drawn whole (never trimmed),
 //     anchored center/bottom, closed eyes in every cell;
 //   - animation.json: authoritative frame order and durationMs per clip;
 //   - look cells: 16 directions, 22.5 deg steps, 0 deg = up, clockwise;
-//     neutral = row 0 col 6 (also used for the pointer dead zone and reduced motion).
+//     neutral = the cell the timing file names, the idle clip's first (also used for the
+//     pointer dead zone and reduced motion).
 // holocron's chat store, from its source: the app is built from src/, so only this path shares
 // the app's store (the ./chat export resolves to dist/, a second store).
 import { type ChatMessage, chatStore } from '@holocron.so/vite/src/chat/chat-store.ts'
@@ -79,7 +82,7 @@ export function mountPet(chat: ChatPort): () => void {
   root.appendChild(sprite)
   document.body.appendChild(root)
 
-  // The 1.8 MB sheet never competes with first paint; the browser caches it across pages.
+  // The 2 MB sheet never competes with first paint; the browser caches it across pages.
   const loadSheet = () => { sprite.style.backgroundImage = `url(${SHEET})` }
   if (document.readyState === 'complete') loadSheet()
   else window.addEventListener('load', loadSheet, { once: true })
