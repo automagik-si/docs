@@ -1,0 +1,64 @@
+---
+title: "Install on Herdr"
+description: "Set up Code mode with Herdr and the Automagik pack on Mac or Linux."
+---
+
+Code mode needs **Herdr and the Automagik pack**. Downloading Automagik Desktop alone
+does not install them. The pack adds the sidebar, spaces, Bots, workers and the Automagik
+layout to Herdr.
+
+## Before you start
+
+- A Mac with Apple silicon, or Linux on x86_64 or ARM64, with a graphical desktop.
+- **Node.js 22.7 or newer**. Install Node from [nodejs.org](https://nodejs.org) first.
+- `curl` and an internet connection.
+- A terminal on the computer where you want to use Herdr.
+
+## Install Herdr and the pack
+
+Download the installer, then run it:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/automagik-si/automagik/main/herdr/install.sh \
+  -o install-automagik-herdr.sh
+bash install-automagik-herdr.sh
+```
+
+The installer asks before installing Herdr if it is missing. It uses Herdr's own
+installer; a different application also named Herdr does not load this pack.
+
+The pack installer reads the signed `herdr-lane` update pointer and checks the pack's
+download against it. The pack releases independently of Desktop; the installer chooses
+its current version for you.
+
+Read the prompts before answering. The installer can also set up the usage meter and
+automations scheduler. Installing DSH as a Herdr agent and bringing Bots back at login
+are separate choices. You can decline optional setup and finish it later.
+
+## Open Code mode
+
+1. Open **Herdr** from your applications menu.
+2. If another layout is active, open the layout picker with **Ctrl+Shift+L** and choose
+   **automagik**. The installer also prints a switch command when needed.
+3. Confirm that the Automagik sidebar and footer appear. The status bar shows the pack
+   version. Open **Mods** to inspect the installed pack pieces.
+4. If this is Herdr's first launch, run the installer again after opening it once. This
+   adds the pack's free shortcuts while keeping Herdr's native shortcuts and your bindings.
+
+With both Desktop and Herdr installed, the Desktop mode switch brings Herdr forward
+for the current Bot's folder. [Desktop setup](/automagik/getting-started) covers Team mode.
+
+## Updates and troubleshooting
+
+Run the installer again to check or repair the pack. It preserves unrelated mods and
+keeps the pack files it replaces for rollback. It never installs or updates Pocket Link.
+
+- **Node is missing or too old:** install Node.js 22.7 or newer, open a new terminal,
+  and run the installer again.
+- **The pack is installed but the sidebar is missing:** select the **automagik** layout.
+- **A mod check fails:** read the installer's named mod and error before proceeding.
+  A downloaded pack alone does not mean every setup step passed.
+- **Automations are unavailable:** the scheduler is separate from the panel. Check the
+  installer's scheduler message and the Automations panel's setup instructions.
+
+For access from your phone, [add Pocket Link and pair Android](/automagik/install/android).

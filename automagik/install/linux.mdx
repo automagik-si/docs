@@ -1,0 +1,59 @@
+---
+title: "Desktop on Linux"
+description: "Install Automagik Desktop using the deb package or AppImage."
+---
+
+You need a **64-bit x86 PC** and a graphical Linux desktop. These downloads are for
+Desktop **v3.129.0**, the newest stable release checked on 12 November 2026.
+
+## Ubuntu or Debian: deb package
+
+1. [Download Automagik-Linux.deb][deb].
+2. Open the downloaded file with your software installer and choose **Install**.
+   Alternatively, open a terminal in the folder containing the download and run:
+
+   ```sh
+   sudo apt install -y ./Automagik-Linux.deb
+   ```
+
+3. Open **Automagik** from your applications menu.
+
+The release also names this same package `Automagik-3.129.0-linux-amd64.deb`.
+Use the filename you actually downloaded if you chose that copy.
+
+## Other Linux distributions: AppImage
+
+1. [Download Automagik-Linux.AppImage][appimage]. Keep it in a folder you want to run it from.
+2. In your file manager, open **Properties → Permissions** and allow executing the file as
+   a program. Or open a terminal in that folder and run:
+
+   ```sh
+   chmod +x Automagik-Linux.AppImage
+   ```
+
+3. Double-click the AppImage to open **Automagik**.
+
+The release also calls this file `Automagik-3.129.0-linux-x86_64.AppImage`.
+
+## Confirm it works
+
+The welcome opens on **Your companion**, where you create and name your Main Bot. Continue with
+[your first connections](/automagik/getting-started#after-desktop-opens).
+For Code mode, [install Herdr and the Automagik pack](/automagik/install/herdr) separately.
+
+## Updates and troubleshooting
+
+Right-click the top bar to check for updates. Once the AppImage has downloaded an app update,
+the sidebar shows **Restart to update to `<version>`**. Choose it to restart and install,
+or keep working: the update also installs when you quit Automagik. The deb uses your package
+manager: when a new version is available, download its deb and install it over the existing package.
+
+- **The deb will not install:** check that you have an x86_64 system and that the terminal
+  is in the folder containing the download. Let apt finish installing its dependencies.
+- **The AppImage does not start:** check its executable permission. If it reports a missing
+  FUSE library, install your distribution's FUSE 2 compatibility package, or use the deb
+  on Ubuntu or Debian.
+
+[deb]: https://github.com/automagik-si/automagik/releases/download/v3.129.0/Automagik-Linux.deb
+[appimage]:
+  https://github.com/automagik-si/automagik/releases/download/v3.129.0/Automagik-Linux.AppImage

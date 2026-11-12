@@ -7,6 +7,7 @@ import { GeniePet } from '../components/genie-pet.tsx'
 import { ProductBrand } from '../components/product-brand.tsx'
 import docs from '../docs.json'
 import { chatGuard } from './chat-guard.ts'
+import { productLogo } from '../components/product-assets.mjs'
 // holocron imports a root style.css only from its own default entry, so a custom entry
 // imports it here, after holocron's styles.
 import '../style.css'
@@ -63,7 +64,7 @@ async function productMarks({ request }: { request: Request }, next: () => Promi
   if (!response?.headers.get('content-type')?.startsWith('text/html')) return response
   const { origin, pathname } = new URL(request.url)
   const slug = productForPath(pathname)
-  const image = `${origin}/brand/${slug}-logo.png`
+  const image = `${origin}${productLogo(slug)}`
   const logoHref = logoHrefs[slug]
   let scriptPlaced = false
   const shareImage = () => {

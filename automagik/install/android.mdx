@@ -1,0 +1,63 @@
+---
+title: "Mobile on Android"
+description: "Install Automagik Pocket and pair your Android phone with Herdr."
+---
+
+Automagik Pocket puts your coding agents on your phone. You need **Android 8.0 or newer**
+and a computer running Herdr with **Pocket Link**. The Desktop app alone does not provide
+the phone connection.
+
+## Install the app
+
+The download below is the APK named by Pocket's update feed, `pocket-lane/latest.json`;
+Pocket releases move independently of Desktop.
+
+1. On your phone, [download the Android APK][apk].
+2. If you still have the old **Herdr Pocket** app, uninstall it first. It cannot update
+   into Automagik, and you will need to pair again.
+3. Open the downloaded APK. When Android asks, allow the browser or file manager you used
+   to install apps, then confirm **Install**.
+4. Open **Automagik**.
+
+## Set up the computer
+
+Use a Mac or Linux computer with Herdr, Node.js 20.3 or newer, and herdr-core installed.
+[The Herdr guide](/automagik/install/herdr) sets up Herdr and the Automagik pack.
+**Pocket Link is separate from the pack** and must also be installed.
+
+Ask your coding agent on that computer to add Pocket Link from the
+[Automagik source archive][source]: copy `herdr/mods/pocket-link` into Herdr's mod folder
+and merge its `keys.json` into Herdr's key configuration. Pocket Link is maintained from source;
+the pack installer does not install or update it.
+
+1. In Herdr, press **⌘⌥P** on Mac or **Ctrl+Alt+P** on Linux to open Pocket Link.
+2. On first use, choose **Install the bridge**, then **Turn on**.
+3. Choose **Pair a phone**. Leave the QR dialog open while you pair.
+
+## Pair your phone
+
+1. In Automagik on Android, tap **Pair with Herdr desktop**, then **Scan the QR code**.
+   You can paste the pairing link instead.
+2. Scan the computer's QR code. The code works once, for ten minutes, and expires when
+   you close the dialog.
+3. Confirm your computer appears in the app and open one of its agents or terminals.
+
+## Updates and troubleshooting
+
+Use **Settings → About → Check for updates** on the phone. Updating closes its connections;
+open the app again to reconnect. Depending on your Android version and install permissions,
+an update may install automatically or ask you to confirm.
+
+- **The QR code expired:** choose **Pair a phone** again and scan the new code.
+- **No computer connection:** check that Pocket Link is turned on and its bridge installed.
+  The phone does not connect by SSH.
+- **Android refuses an update:** a debug build or a copy signed with another key cannot
+  update to the release. Uninstall that copy, install the release, and pair again.
+- **The phone lost its connection after restarting:** open the app and connect again.
+- **The phone asks you to update Pocket Link:** update the computer's mod too. Updating
+  the phone or Automagik pack does not update Pocket Link.
+
+[apk]:
+  https://github.com/automagik-si/automagik/releases/download/v3.127.8/automagik-pocket-3.127.8.apk
+
+[source]: https://github.com/automagik-si/automagik/archive/refs/heads/main.zip

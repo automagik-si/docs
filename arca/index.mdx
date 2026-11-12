@@ -1,0 +1,54 @@
+---
+title: "Arca"
+description: "Be your own cloud. Infrastructure for AI agents."
+---
+
+# Arca
+
+**Be your own cloud. Infrastructure for AI agents.**
+
+Automagik Arca runs your services on machines you own. An assistant can look at everything and propose changes; you approve them with a passkey.
+
+Arca is open source under the Apache-2.0 licence, and it is self-hosted: it runs on machines you own, and Arca itself needs no outside service to work.
+
+> Arca is early software, before version 1.0: things can still change from one release to the next. It manages one machine at a time.
+
+## What Arca is today
+
+| Works today | Not yet |
+|---|---|
+| The installer sets up a node that only looks. An assistant with its token reads your projects, instances, host readings and alerts, and changes nothing. | The installer does not turn on changes, and it sets up no approval page. Both are done by hand today. A one-step way is being built. |
+| On a node set up by hand to change things, these run from the templates Arca ships: Postgres, NATS, Omni, Automagik, a Cloudflare tunnel, a workspace virtual machine and GitHub runner pools. A GitLab runner pool ships too: it is new and has not yet run against a real GitLab. | Arca cannot run any app or container image you name: a service comes from a template, or Arca takes over one that already runs on the machine. |
+| Set up the way the quickstart shows, an assistant can only look and propose. You approve with your passkey. Arca checks passkeys itself; no outside sign-in service is involved. | The ChatGPT and Claude apps cannot connect to Arca in one click yet. |
+| The node is an MCP server over HTTP. An assistant with a shell on the same machine reaches it with `arca call`. | The installer opens no network address. An assistant that takes an MCP server URL needs one you add to the config by hand. |
+| Arca keeps an append-only journal of the changes it applies. Starts, stops and restarts are logged separately. | Arca does not repair things by itself. |
+| Arca can save snapshots of a service onto a disk you plug in. | Arca cannot yet restore a snapshot for you: restoring is done by hand with Incus. |
+| Two machines can be paired with a one-time code. | There is no installer for a Mac, and the installer has not been run on a machine that never had Arca or Incus. |
+
+The Doctor, Arca's own assistant on the canvas, reads the state of your machines and services, including Arca's alerts, and proposes changes that you approve.
+
+On your own machine, your services' secrets stay on that machine.
+
+## Get started
+
+You need one Linux machine (x86_64) with Incus already running, and a user allowed to read Incus. A recent Linux is required (glibc 2.34 or newer: Enterprise Linux 9, Ubuntu 22.04, Debian 12, or newer).
+
+```sh
+curl -fsSL https://get.automagik.si/arca | sh
+```
+
+The install gives you a node that only looks: it reads your machines and changes nothing, and it has no approval page yet. Letting it change things is set up by hand today; a one-step way is being built.
+
+The installer never asks for sudo, refuses to run as root, writes only in your home folder, and a second run updates in place.
+
+Prefer to hand it to a coding agent that has a shell on that machine? Give it this:
+
+> Download https://get.automagik.si/arca, read it, run it with sh, and tell me what it printed.
+
+The full quickstart and the guide are in the repository: https://github.com/automagik-si/arca
+
+## Not available yet
+
+- **Arca Cloud**, the same thing on machines we run, is being built. It is not open.
+- **Arca OS**: where we are going. It takes over a whole machine and erases its disk. Not available for download yet.
+- **Mac**: there is no installer for a Mac.

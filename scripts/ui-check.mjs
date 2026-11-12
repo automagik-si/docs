@@ -54,6 +54,7 @@ import net from 'node:net'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { chromium, firefox, webkit } from 'playwright'
+import { productLogo } from '../components/product-assets.mjs'
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const SHOTS = path.join(ROOT, '.ui-check')
@@ -63,7 +64,6 @@ const MOBILE = { width: 390, height: 844 }
 const NAV_TIMEOUT_MS = 60_000
 const QUIET_MS = 500 // Playwright's networkidle window
 const ENGINES = { chromium, firefox, webkit }
-const LANDINGS = ['/genie', '/omni', '/mikro']
 const PET_PAGES = ['/genie', '/genie/quickstart', '/omni', '/omni/quickstart', '/mikro', '/mikro/quickstart']
 const PET_VISIBLE_MS = 8_000 // the hero hands the Genie over, or the pet shows after 6 s
 const DRAWER_MS = 5_000
@@ -80,9 +80,12 @@ const PRODUCTS = DOCS.navigation.products.map(({ product, groups }) => {
   const pages = groups.flatMap((group) => group.pages ?? []).filter((page) => typeof page === 'string')
   const landing = `/${pages[0]}`
   const folder = landing.split('/')[1]
-  const deep = pages.includes(`${folder}/quickstart`) ? `/${folder}/quickstart` : `/${pages[1]}`
+  const deep = pages.includes(`${folder}/quickstart`)
+    ? `/${folder}/quickstart`
+    : `/${pages[1] ?? pages[0]}`.replace(/\/index$/, '')
   return { name: product, slug: product.toLowerCase(), landing, folderUrl: landing.replace(/\/index$/, ''), deep }
 })
+const LANDINGS = PRODUCTS.map((product) => product.folderUrl)
 const productPage = (slug) => PRODUCTS.find((product) => product.slug === slug)?.folderUrl ?? `/no-product-${slug}`
 const GATEWAY_ORIGIN = fs.readFileSync(path.join(ROOT, 'vite.config.ts'), 'utf8').match(/GATEWAY_ORIGIN = '([^']+)'/)?.[1]
 
@@ -607,7 +610,7 @@ async function changedShot(locator, from) {
 // server's, and it updates them on every client navigation. Once React has committed the head
 // (a <meta> there is React's node), exactly one of each must remain, on the product's logo.
 async function checkShareImages(page, where, product) {
-  const expected = new URL(`/brand/${product.slug}-logo.png`, page.url()).href
+  const expected = new URL(productLogo(product.slug), page.url()).href
   const read = () =>
     page.evaluate(() => {
       const contents = (selector) => [...document.querySelectorAll(selector)].map((meta) => meta.getAttribute('content'))
@@ -816,8 +819,10 @@ async function checkProducts(browser, base, engine) {
     for (const [other, otherShot] of headers.slice(i + 1))
       if (shot.equals(otherShot)) fail(`products: the ${slug} and ${other} header logos look the same`)
   })
-  const first = shots.header.get(PRODUCTS[0].slug)
-  if (shots.footer && first?.equals(shots.footer)) fail(`products: the footer logo looks like the ${PRODUCTS[0].slug} header logo`)
+  const genie = shots.header.get('genie')
+  if (shots.footer && genie?.equals(shots.footer)) {
+    fail('products: the footer logo looks like the Genie header logo')
+  }
   await checkSwitching(browser, base, engine)
   for (const product of PRODUCTS)
     for (const phase of ['before hydration', 'after hydration']) await checkLogoLink(browser, base, engine, product, phase)
@@ -882,7 +887,8 @@ async function checkMeta(_browser, base) {
     if (scripts !== 1) fail(`${where}: ${scripts} __genieProductLandings head scripts, expected 1`)
 
     const metas = html.match(/<meta\b[^>]*>/gi) ?? []
-    const expected = new URL(`/brand/${product.slug}-logo.png`, base).href
+    const logo = productLogo(product.slug)
+    const expected = new URL(logo, base).href
     for (const [key, value] of [['property', 'og:image'], ['name', 'twitter:image']]) {
       const tags = metas.filter((tag) => attribute(tag, key) === value)
       if (tags.length !== 1) {
@@ -901,9 +907,13 @@ async function checkMeta(_browser, base) {
         continue
       }
       const type = image.headers.get('content-type') ?? ''
-      if (image.status !== 200 || !type.startsWith('image/png')) fail(`${where}: ${value} ${url} answered ${image.status} ${type}, expected 200 image/png`)
-      else if (url === expected && !bytes.equals(fs.readFileSync(path.join(ROOT, 'public/brand', `${product.slug}-logo.png`))))
-        fail(`${where}: ${value} ${url} is not public/brand/${product.slug}-logo.png`)
+      const expectedType = logo.endsWith('.svg') ? 'image/svg+xml' : 'image/png'
+      if (image.status !== 200 || !type.startsWith(expectedType)) {
+        fail(`${where}: ${value} ${url}: ${image.status} ${type}, expected 200 ${expectedType}`)
+      } else if (url === expected &&
+        !bytes.equals(fs.readFileSync(path.join(ROOT, 'public', logo)))) {
+        fail(`${where}: ${value} ${url} does not match public${logo}`)
+      }
     }
     if (GATEWAY_ORIGIN)
       for (const tag of metas)
