@@ -19,7 +19,7 @@ Genie sec verify-install — checking the running binary
 ✅ sha256:    0bd5f5… matches manifest.json
 ✅ cosign:    keyless signature valid against expected identity
 ✅ fulcio:    certificate identity matches pinned value
-✅ slsa:      Level 3 provenance valid; built from automagik-dev/genie@<sha>
+✅ slsa:      Level 3 provenance valid; built from automagik-si/genie@<sha>
 ✅ source:    binary path resolves to ~/.local/bin/genie
 
 Verified: this binary was built and signed by Namastex's release pipeline.
@@ -68,7 +68,7 @@ curl -fsSL https://get.automagik.dev/genie | grep EXPECTED_COSIGN_IDENTITY
 
 ```bash
 # 2. The repo-root SECURITY.md
-curl -fsSL https://raw.githubusercontent.com/automagik-dev/genie/main/SECURITY.md \
+curl -fsSL https://raw.githubusercontent.com/automagik-si/genie/main/SECURITY.md \
   | grep -A1 "## Cosign certificate identity"
 ```
 
@@ -79,10 +79,10 @@ curl -fsSL https://automagik.dev/.well-known/security.txt | grep cosign-identity
 
 ```bash
 # 4. The pinned GitHub issue
-gh issue list --repo automagik-dev/genie --state open --label signing-key-fingerprint --limit 1
+gh issue list --repo automagik-si/genie --state open --label signing-key-fingerprint --limit 1
 ```
 
-All four should produce the **byte-identical** identity string (a regex over `https://github.com/automagik-dev/genie/.github/workflows/<workflow>.yml@<branch-or-tag>` with the OIDC issuer set to `https://token.actions.githubusercontent.com`).
+All four should produce the **byte-identical** identity string (a regex over `https://github.com/automagik-si/genie/.github/workflows/<workflow>.yml@<branch-or-tag>` with the OIDC issuer set to `https://token.actions.githubusercontent.com`).
 
 If any one disagrees:
 - **One channel different, three match the binary's claim:** the disagreeing channel is stale or compromised. File an issue with the four values + the `--verbose` output of `genie sec verify-install`.
