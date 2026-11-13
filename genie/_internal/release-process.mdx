@@ -65,8 +65,8 @@ The G6 PR cannot merge until both checks pass:
    ```bash
    npm deprecate '@automagik/genie@<=4.260509.3' \
      "npm distribution discontinued 2026-05-09. Install via install.sh: \
-   curl -fsSL https://raw.githubusercontent.com/automagik-dev/genie/main/install.sh | bash. \
-   See https://github.com/automagik-dev/genie/releases for signed tarballs."
+   curl -fsSL https://raw.githubusercontent.com/automagik-si/genie/main/install.sh | bash. \
+   See https://github.com/automagik-si/genie/releases for signed tarballs."
    ```
    Replace `<=4.260509.3` with whatever `npm view @automagik/genie version` returned at runbook execution time.
 4. **Verify the deprecate message is visible**:
@@ -93,7 +93,7 @@ For operators currently running `npm install -g @automagik/genie`:
 npm uninstall -g @automagik/genie
 
 # 2. Install via the canonical path.
-curl -fsSL https://raw.githubusercontent.com/automagik-dev/genie/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/automagik-si/genie/main/install.sh | bash
 
 # 3. Verify.
 genie --version

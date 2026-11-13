@@ -6,7 +6,7 @@ description: "When and how to rotate the cosign certificate identity that operat
 ---
 
 <Note>
-  Release signing for `@automagik/genie` is **cosign keyless only**. There is no long-lived private key, no hardware-backed offline key, no public-key fingerprint to pin. "Rotation" here means rotating the **certificate-identity pin** (workflow-path@ref, OIDC issuer, and provenance source-uri) that operators cross-check against `SECURITY.md`, the repository's [`.well-known/security.txt`](https://raw.githubusercontent.com/automagik-dev/genie/main/.well-known/security.txt) and the in-repo witnesses.
+  Release signing for `@automagik/genie` is **cosign keyless only**. There is no long-lived private key, no hardware-backed offline key, no public-key fingerprint to pin. "Rotation" here means rotating the **certificate-identity pin** (workflow-path@ref, OIDC issuer, and provenance source-uri) that operators cross-check against `SECURITY.md`, the repository's [`.well-known/security.txt`](https://raw.githubusercontent.com/automagik-si/genie/main/.well-known/security.txt) and the in-repo witnesses.
 </Note>
 
 ## When to rotate
@@ -26,9 +26,13 @@ happens. Routine releases do NOT require rotation.
    ref, breaks `genie update` on every host already running a release,
    because those binaries carry the old identity.
    `scripts/reconcile-release-assets.sh` carries it too.
-3. **Repository is renamed.** `automagik-dev/genie` becomes something else.
-   Both the signer identity regexp and the SLSA provenance `source-uri` must
-   move atomically.
+3. **Repository is renamed.** `automagik-si/genie` becomes something else, as
+   `automagik-dev/genie` became `automagik-si/genie` in November 2026
+   ([what that changed](/genie/incident-response/repository-rename)). The
+   signer identity regexp, the SLSA provenance `source-uri` and the names the
+   verifier accepts gain the new name in one release, and the old name stays
+   accepted for releases already signed under it. The repository and owner
+   ids, which a rename does not change, stay required.
 4. **OIDC issuer changes.** GitHub Actions' OIDC token issuer URL changes
    (rare; announced upstream). The pinned
    `certificate-oidc-issuer` must change with it.
@@ -55,7 +59,7 @@ ship. Do NOT reduce the grace period to "fix" a broken window.
 
 ### Phase 1: pre-rotation (before touching anything)
 
-1. Open a tracking issue in `automagik-dev/genie` titled
+1. Open a tracking issue in `automagik-si/genie` titled
    `SIGNING_CERT_IDENTITY_<YYYYMMDD>` using the
    `.github/ISSUE_TEMPLATE/signing-key-fingerprint.md` template.
 2. Draft the new values:
@@ -128,15 +132,16 @@ the tarball once it has been tampered with.
 
 ### Goal
 
-Simulate the whole procedure end to end in under one hour, against a disposable
-`automagik-dev/genie-signing-drill` repo (or a local fork pointing at a
-fixture workflow), without touching the production signing identity.
+Simulate the whole procedure end to end in under one hour, in a throwaway
+directory signed with the drill operator's own short-lived identity (the steps
+below), without touching the production signing identity. The drill needs no
+repository of its own: it signs a fixture file, not a release.
 
 ### Steps
 
 ```bash
 # 1. Stand up a disposable fixture directory under /tmp. No production repos.
-#    Run this from a clone of automagik-dev/genie: the drill rehearses the
+#    Run this from a clone of automagik-si/genie: the drill rehearses the
 #    rotation on a copy of its verification script.
 export DRILL=$(mktemp -d -t genie-signing-drill-XXXXXX)
 cp scripts/verify-release.sh "${DRILL}/verify-release.sh"
