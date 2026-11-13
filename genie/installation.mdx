@@ -70,7 +70,7 @@ Older Genie releases were installed globally through a package manager. When `in
 The skills are published through [skills.sh](https://skills.sh), so an agent can use them without the Genie CLI:
 
 ```bash
-npx skills add automagik-dev/genie -g
+npx skills add automagik-si/genie -g
 ```
 
 - `-g` installs for your user, under your home directory. Without it the command is project scoped: it writes the skills into the current directory and nothing machine wide.
@@ -81,7 +81,7 @@ npx skills add automagik-dev/genie -g
 ### The public command tracks `main`, not a release
 
 <Warning>
-  `npx skills add automagik-dev/genie` installs the skills on the repository's default branch, `main`, whatever `@<ref>` suffix you add: the skills CLI treats that suffix as a skill filter, so the command still resolves to `main`. `main` can be ahead of or behind any release.
+  `npx skills add automagik-si/genie` installs the skills on the repository's default branch, `main`, whatever `@<ref>` suffix you add: the skills CLI treats that suffix as a skill filter, so the command still resolves to `main`. `main` can be ahead of or behind any release.
 
   `genie install` and `genie update` point the same CLI at the skill tree inside the signed release you are running. Use them when you need the skills that match your binary.
 </Warning>
