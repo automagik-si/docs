@@ -139,10 +139,10 @@ The trailer line must:
   bottom of the file is the only line that should match).
 - Be followed by the reviewer's name and email in `Name <email>` format
   (the same convention `git commit -s` produces).
-- Reference a real human reviewer — Felipe per the wish, or a designee
-  Felipe names in the PR thread.
+- Reference a real human reviewer — the owner per the wish, or a designee
+  the owner names in the PR thread.
 
-Once the reviewer (Felipe or designee per wish decision row in acceptance
+Once the reviewer (the owner or designee per wish decision row in acceptance
 criteria) has:
 
 1. Verified the matrix above is filled in,
