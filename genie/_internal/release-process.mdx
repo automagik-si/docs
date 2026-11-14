@@ -17,7 +17,7 @@ description: "How Genie ships: GitHub Releases is the only distribution channel;
 | `install.sh` | **Primary** | Reads `latest.json`, downloads the platform tarball, runs `gh attestation verify` (or cosign verify-blob fallback), extracts to `~/.genie/bin/`. |
 | `genie update` | **Primary** | Same primitives as `install.sh`; atomic binary swap with rollback. |
 | npm (`@automagik/genie`) | **Discontinued** | No new versions published. Existing versions carry an `npm deprecate` redirect message (see runbook below). The operator-side runbook is the only path that touches npm. |
-| Custom CDN (`cdn.automagik.dev` / R2 / Fastly) | **Out of scope** | GitHub Releases + `raw.githubusercontent.com` is the single distribution path. Per Felipe directive 2026-05-08. |
+| Custom CDN (`cdn.automagik.dev` / R2 / Fastly) | **Out of scope** | GitHub Releases + `raw.githubusercontent.com` is the single distribution path. Per owner directive 2026-05-08. |
 
 The `Publish to npm via OIDC` step in `.github/workflows/version.yml` was deleted in wish `genie-distribution-cutover` G6. The npm OIDC trusted-publisher entry on npmjs.com and the org-level `NPM_TOKEN` secret are no longer used by this repo and are safe to remove.
 
@@ -44,7 +44,7 @@ push to dev → CI green → version.yml derives version, commits + tags + pushe
 Run **once**, post-merge of the G6 PR. Subsequent releases do not need to re-run this.
 
 <Warning>
-  `npm deprecate` requires a long-lived classic npm token, **not** the npm OIDC trusted-publisher token (publish-only). The operator-side token is held by Felipe and is the same token used by `genie-supply-chain-signing` for off-CI operations. Do **not** add this token to repo or org secrets — it must remain operator-side.
+  `npm deprecate` requires a long-lived classic npm token, **not** the npm OIDC trusted-publisher token (publish-only). The operator-side token is held by the release owner and is the same token used by `genie-supply-chain-signing` for off-CI operations. Do **not** add this token to repo or org secrets — it must remain operator-side.
 </Warning>
 
 ### Pre-merge gate
@@ -52,11 +52,11 @@ Run **once**, post-merge of the G6 PR. Subsequent releases do not need to re-run
 The G6 PR cannot merge until both checks pass:
 
 1. This runbook page (`release-process.mdx`) is committed and visible in the PR diff.
-2. The operator (Felipe) confirms current access to the operator npm token (e.g. via `npm whoami` against the `automagik` org from the operator's machine).
+2. The release owner confirms current access to the operator npm token (e.g. via `npm whoami` against the `automagik` org from the operator's machine).
 
 ### Steps
 
-1. **Operator machine setup** — Felipe authenticates to npm with the operator-side token:
+1. **Operator machine setup** — the release owner authenticates to npm with the operator-side token:
    ```bash
    npm whoami                              # confirms identity (expect: an org owner of @automagik)
    ```
