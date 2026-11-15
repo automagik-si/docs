@@ -5,7 +5,7 @@
 | **Status** | IN_PROGRESS |
 | **Slug** | `docs-holocron-brand` |
 | **Date** | 2026-10-04 |
-| **Author** | Felipe Rosa (plan drafted by Claude) |
+| **Author** | the owner (plan drafted by Claude) |
 | **Appetite** | medium |
 | **Branch** | `wish/docs-holocron-brand` |
 | **Repos touched** | `automagik-dev/docs` |
@@ -38,25 +38,25 @@ Applies the launch-video design system to the holocron site: neon design B token
 
 | # | Decision | Rationale |
 |---|----------|-----------|
-| 1 | Design follows the Automagik design system as in the launch videos: neon design B `#0B0B12` / `#E8E6F0` / `#FF3FF5` / `#5EF2FF` / `#2A2438`; fonts Geist and JetBrains Mono; the real logo (triskele plus GENIE wordmark, never the mascot face) with the dark-mode invert cancelled; the lamp play (film scene 3) as the Genie introduction hero; the sprite pet as a site-wide companion; clicking the pet opens the AI chat; the mascot's eyes are always closed. | Owner decision (Felipe, 2026-10-03/04, final). The 2026-10-04 product-logo requirement is delivered by `docs-holocron-products`. |
+| 1 | Design follows the Automagik design system as in the launch videos: neon design B `#0B0B12` / `#E8E6F0` / `#FF3FF5` / `#5EF2FF` / `#2A2438`; fonts Geist and JetBrains Mono; the real logo (triskele plus GENIE wordmark, never the mascot face) with the dark-mode invert cancelled; the lamp play (film scene 3) as the Genie introduction hero; the sprite pet as a site-wide companion; clicking the pet opens the AI chat; the mascot's eyes are always closed. | Owner decision (2026-10-03/04, final). The 2026-10-04 product-logo requirement is delivered by `docs-holocron-products`. |
 | 2 | The production pet is mounted through holocron's custom entry: `holocron({ entry: './src/server.tsx' })`, where `src/server.tsx` mounts `holocronApp` and then registers `.layout('/*', …)` rendering one `'use client'` `<GeniePet />`. `GeniePet` renders `null` and, in an effect, mounts the spike's plain-DOM pet on `document.body` once per page lifetime. | The custom entry is holocron's documented extension point (`website/src/pages/docs/custom-entry.mdx`) and the one holocron's own Workers site uses. Because `GeniePet` renders nothing and attaches to `body`, its place in the layout tree does not matter, and a module-level guard keeps one pet even if the layout remounts. Rejected: rewriting HTML in middleware (a separately bundled script cannot share holocron's chat store), an import in every MDX page (41 edits, and every new page must remember it), a Vite transform of holocron's source (patches internals). |
 | 3 | The pet reaches the chat through `useChatWidget()` (`isOpen`, `isGenerating`, `messages`, `open`, `close`, `toggle`), imported from `@holocron.so/vite/src/chat/use-chat-widget.ts`. | It is the hook holocron documents for controlling its chat. holocron's app is built from `src/` (`vite-plugin.ts:471` aliases `@holocron.so/vite/app` to source), so only a `src/` import shares the app's store; the `./chat` export resolves to `dist/` and would bind a second, unrelated store. `./src/*` is an exported subpath of the package. This replaces the spike's direct `chat-store.ts` import. |
 | 4 | One logo image for light and dark, with the invert cancelled in CSS: `.slot-logo img` and `img[src$="/brand/genie-logo.png"]` get `filter: none`, `mix-blend-mode: normal`, `opacity: 1`. | With `light === dark` holocron's `<Logo>` takes its single-image branch and adds Tailwind's `dark:invert`, which turns cyan red and magenta green. The spike proved the cancel; the UI check asserts the computed `filter` is `none`. |
 | 5 | Fonts are the video renderer's exact files, Latin subset only: `geist-latin.woff2` and `jetbrains-mono-latin.woff2`. | Same glyphs as the videos. The docs are English, and Latin-1 also covers Portuguese accents, so the two `latin-ext` files the spike carried are dropped. |
 | 6 | The lamp hero (`lamp-hero.tsx`, the spike's canvas port of `render-src/film.html` scene 3, every frame a pure function of film time) replaces the video at the top of `genie/index.mdx`. It plays once, hands the Genie to the pet with a `genie:handoff` event, replays on click, and shows only the settled frame under reduced motion. | Owner decision 1; proven in the spike. |
-| 7 | Eyes closed is guaranteed by provenance: only the approved render bundle's art is used (spritesheet cells, `face.png`, `lamp.png`, the logo crop), nothing is drawn or edited, and every asset is byte-identical to the frozen snapshot's copy (hashes checked in each group's validation). Felipe signs off screenshots in `docs-holocron-cutover`. | Eyes cannot be asserted by a script; byte identity plus a human look can. |
+| 7 | Eyes closed is guaranteed by provenance: only the approved render bundle's art is used (spritesheet cells, `face.png`, `lamp.png`, the logo crop), nothing is drawn or edited, and every asset is byte-identical to the frozen snapshot's copy (hashes checked in each group's validation). The owner signs off screenshots in `docs-holocron-cutover`. | Eyes cannot be asserted by a script; byte identity plus a human look can. |
 | 8 | Canaries: every rule in `style.css` that targets holocron markup carries `/* holocron-internal: <id> */`, and `scripts/ui-check.mjs` holds one canary per id: `{ id, selector, page, action }`. The check strips pseudo-classes and pseudo-elements that a query cannot match (`:hover`, `:focus-visible`, `::before`, `::after`) and keeps structural ones (`:not()`, `:has()`, `:first-child`). `action` is `none` or `open-drawer` (click the pet, wait for `.holocron-chat-drawer-panel`). Selectors that only match after a chat answer (links or code inside messages) are checked through their structural container (`.holocron-chat-drawer-messages`, `.slot-aside`), since this wish has no gateway. Group 1 defines all 24 canaries and asserts the 21 with action `none`; the 3 drawer canaries (`.holocron-chat-drawer-panel`, `.holocron-chat-drawer-messages a[href]` and its `:hover`) are asserted in Group 2, where the pet that opens the drawer arrives. Opening the drawer in Group 1 through holocron's sidebar "Ask AI" box would mean submitting a question to a gateway that does not exist yet, so moving the 3 assertions is the cleaner choice. A check also fails when a tag has no canary or a canary has no tag. | The plan review counted 27 hooks into holocron internals in the frozen `style.css`: 24 in the part this wish ports, 3 in the product block `docs-holocron-products` ports. With `@holocron.so/vite` pinned at 0.36.0 they hold; on an upgrade a renamed hook fails CI instead of silently unstyling the site. |
 | 9 | `components/pet/animation.json` is stored minified, equal after parsing to the snapshot's file. | It is 781 lines of data; minified it is one line (7,873 bytes) and keeps this wish within the insertion band. |
 | 10 | The pet sets its spritesheet (1.8 MB) as a background only after the window `load` event. | It never competes with first paint; the browser caches it across pages. |
 | 11 | PR CI runs the UI check in Chromium only. | Firefox and WebKit run in `docs-holocron-products`' own validation, where engine differences (`content: url()` on images) matter; keeping CI on one engine keeps PR runs short. |
-| 12 | The frozen, read-only snapshot `/home/genie/.genie/state-backups/holo-spike-2026-10-04-frozen/` is the only source. Every file this wish ports or copies is checked by sha256 prefix, both in the snapshot and in the repository, in the group's validation. | The live spike and the mutable archive kept changing during planning; a frozen source makes the ports reviewable. |
-| 13 | **Owner decisions at plan approval (Felipe, 2026-10-04, final; recorded through the question harness).** Hosting: Cloudflare Workers Paid ("Cloudflare Workers Paid (Recomendado)"); Vercel was considered and dropped because holocron has no Vercel target. A. Visitor IP: no per-IP rate limit for now, deferred by owner; trigger to revisit: abuse or the spend cap being hit. The gateway token gate, the hard daily spend cap with its reservation ledger, the input bounds (64 KB, no `system` role), `maxOutputTokens`, the step limit, `redirect: 'manual'` and the canonical-path guard stay. B. Retired-URL redirects: none ("não quero fazer redirect, consider this a fresh start; we will revamp the other product docs later"); only `/` goes to the Genie landing, as site navigation; retired pages answer 404. C. PR previews: none ("Sem previews", 2026-10-04); PRs run only `build` and `verify` with no secrets, so the preview-chat question is moot. D. mikro URLs: `rlmx/` moves to `mikro/` with no redirects; `/rlmx/*` answers 404. | Recorded as given; all five wishes are APPROVED on these terms. None changes this wish's files. |
+| 12 | The frozen, read-only snapshot `<GENIE_HOME>/state-backups/holo-spike-2026-10-04-frozen/` is the only source. Every file this wish ports or copies is checked by sha256 prefix, both in the snapshot and in the repository, in the group's validation. | The live spike and the mutable archive kept changing during planning; a frozen source makes the ports reviewable. |
+| 13 | **Owner decisions at plan approval (2026-10-04, final; recorded through the question harness).** Hosting: Cloudflare Workers Paid ("Cloudflare Workers Paid (Recomendado)"); Vercel was considered and dropped because holocron has no Vercel target. A. Visitor IP: no per-IP rate limit for now, deferred by owner; trigger to revisit: abuse or the spend cap being hit. The gateway token gate, the hard daily spend cap with its reservation ledger, the input bounds (64 KB, no `system` role), `maxOutputTokens`, the step limit, `redirect: 'manual'` and the canonical-path guard stay. B. Retired-URL redirects: none ("não quero fazer redirect, consider this a fresh start; we will revamp the other product docs later"); only `/` goes to the Genie landing, as site navigation; retired pages answer 404. C. PR previews: none ("Sem previews", 2026-10-04); PRs run only `build` and `verify` with no secrets, so the preview-chat question is moot. D. mikro URLs: `rlmx/` moves to `mikro/` with no redirects; `/rlmx/*` answers 404. | Recorded as given; all five wishes are APPROVED on these terms. None changes this wish's files. |
 
 ## Simplicity Case
 
 - **Simplest complete design:** one stylesheet, one custom entry with one layout, one client component that renders nothing and mounts the spike's DOM pet, one canvas hero imported by one page.
 - **Added machinery:** the custom entry (holocron has no other site-wide client hook; spike finding) and `scripts/ui-check.mjs` with Playwright (the CSS hooks are fragile across holocron versions, and pet behavior can only be proven in a browser).
-- **Deferred until measured:** committed screenshot baselines with pixel diffs (screenshots are produced for Felipe's sign-off in the cutover wish instead), heroes for Omni and mikro, a smaller spritesheet.
+- **Deferred until measured:** committed screenshot baselines with pixel diffs (screenshots are produced for the owner's sign-off in the cutover wish instead), heroes for Omni and mikro, a smaller spritesheet.
 - **Complexity removed:** the spike's dev-only HTML injection and its HMR wiring, the `latin-ext` font files, the separate `neutral.png` (the neutral pose is a spritesheet cell), the direct `chat-store` import, a static `og:image` setting (`docs-holocron-products` rewrites both share-image tags, which `seo.metatags` alone does not fix).
 
 ## Dependencies
@@ -64,7 +64,7 @@ Applies the launch-video design system to the holocron site: neon design B token
 **depends-on:** docs-holocron
 **blocks:** docs-holocron-products, docs-holocron-chat, docs-holocron-cutover
 
-Starts after `docs-holocron` merges to `main`; branch `wish/docs-holocron-brand` is cut from `origin/main`. Every source comes from the frozen snapshot `/home/genie/.genie/state-backups/holo-spike-2026-10-04-frozen/site/`; the hashes below were recorded against it on 2026-10-04. The original art is under the genie checkout's untracked `.orca/drops/` and `.genie/brainstorms/genie-launch/`.
+Starts after `docs-holocron` merges to `main`; branch `wish/docs-holocron-brand` is cut from `origin/main`. Every source comes from the frozen snapshot `<GENIE_HOME>/state-backups/holo-spike-2026-10-04-frozen/site/`; the hashes below were recorded against it on 2026-10-04. The original art is under the genie checkout's untracked `.orca/drops/` and `.genie/brainstorms/genie-launch/`.
 
 ## Success Criteria
 
@@ -95,7 +95,7 @@ Starts after `docs-holocron` merges to `main`; branch `wish/docs-holocron-brand`
 - Exact pins, no `^` or `~`: `@holocron.so/vite` 0.36.0, `vite` 8.3.2, `@cloudflare/vite-plugin` 1.62.5, `wrangler` 4.147.0, `react` 19.3.0, `react-dom` 19.3.0; `playwright` pinned exactly when added.
 - Run wrangler as `npx wrangler`; it is not installed globally.
 - Local commands work on Linux and macOS; Windows is not a target.
-- Source of truth: `/home/genie/.genie/state-backups/holo-spike-2026-10-04-frozen/`, read-only; every ported file is hash-checked.
+- Source of truth: `<GENIE_HOME>/state-backups/holo-spike-2026-10-04-frozen/`, read-only; every ported file is hash-checked.
 - Brand tokens: `#0B0B12` surface, `#E8E6F0` text, `#FF3FF5` magenta, `#5EF2FF` cyan, `#2A2438` border.
 - Fonts: Geist and JetBrains Mono.
 - The logo is the triskele plus the GENIE wordmark, never the mascot face; the dark-mode invert is cancelled.
@@ -103,7 +103,7 @@ Starts after `docs-holocron` merges to `main`; branch `wish/docs-holocron-brand`
 - Clicking the pet opens the AI chat.
 - `HOLOCRON_SKIP_BUILD_ERRORS` is never set.
 - No secret in git, CI logs, command lines or repository files.
-- Outward or irreversible steps (pushes to `main`, DNS, secrets, production deploys) go to Felipe through the question harness first.
+- Outward or irreversible steps (pushes to `main`, DNS, secrets, production deploys) go to the owner through the question harness first.
 - New user-facing copy: no hashtags, no dash punctuation, no "not X, it's Y" construction.
 - A change that alters the generated deploy config (`wrangler.jsonc`, the Cloudflare Vite plugin, wrangler or the build entry) regenerates `scripts/expected-wrangler.json` with `node scripts/check-deploy-config.mjs . --write` in the same PR; the `build` job's drift check fails otherwise.
 - "Wishes in, PRs out" and "context framework" are never headings.
@@ -149,7 +149,7 @@ Starts after `docs-holocron` merges to `main`; branch `wish/docs-holocron-brand`
 
 **Validation:**
 ```bash
-export SNAP=/home/genie/.genie/state-backups/holo-spike-2026-10-04-frozen/site
+export SNAP="<GENIE_HOME>/state-backups/holo-spike-2026-10-04-frozen/site"
 node -e 'const c=require("crypto"),fs=require("fs"),S=process.env.SNAP;const h=b=>c.createHash("sha256").update(b).digest("hex").slice(0,16);const src={"style.css":"b4e829d3b742ad0d"};const cp={"public/brand/genie-logo.png":"af3c8fffffa8ff6d","public/brand/genie-favicon.png":"4f998b69b81f2f96","public/fonts/geist-latin.woff2":"19f9c92546aa300c","public/fonts/jetbrains-mono-latin.woff2":"83c005d49d8a6a50"};let ok=true;for(const[f,w]of Object.entries({...src,...cp}))if(h(fs.readFileSync(S+"/"+f))!==w){console.error("snapshot",f);ok=false}for(const[f,w]of Object.entries(cp))if(h(fs.readFileSync(f))!==w){console.error("repo",f);ok=false}process.exit(ok?0:1)'
 test "$(grep -c 'holocron-internal:' style.css)" -ge 24
 npm ci
@@ -189,7 +189,7 @@ node scripts/ui-check.mjs --serve
 
 **Validation:**
 ```bash
-export SNAP=/home/genie/.genie/state-backups/holo-spike-2026-10-04-frozen/site
+export SNAP="<GENIE_HOME>/state-backups/holo-spike-2026-10-04-frozen/site"
 node -e 'const c=require("crypto"),fs=require("fs"),S=process.env.SNAP;const h=b=>c.createHash("sha256").update(b).digest("hex").slice(0,16);const src={"components/genie-pet.ts":"daf41943fbb81ec1","components/lamp-hero.tsx":"2b5053f79700582a"};const cp={"public/genie-hero/lamp.png":"af66b73273569de5","public/genie-hero/face.png":"89c995e76fc55f3e","public/genie-hero/face-points.json":"30104120432dff19","public/pet/spritesheet.webp":"431aa00ad989e502"};let ok=true;for(const[f,w]of Object.entries({...src,...cp}))if(h(fs.readFileSync(S+"/"+f))!==w){console.error("snapshot",f);ok=false}for(const[f,w]of Object.entries(cp))if(h(fs.readFileSync(f))!==w){console.error("repo",f);ok=false}for(const f of[S+"/components/pet/animation.json","components/pet/animation.json"])if(h(JSON.stringify(JSON.parse(fs.readFileSync(f,"utf8"))))!=="ea20b7c43cda5bfd"){console.error("animation",f);ok=false}process.exit(ok?0:1)'
 npm ci
 npm run build
@@ -269,7 +269,7 @@ Open: Group 1's "CI passes on the PR" criterion, pending the PR.
 
 ### 404 pet follow-up — 2026-10-05 (engineer, `feat/pet-on-404`)
 
-**Owner ask (Felipe, 2026-10-05): "Quero o pet na 404".** Every 404 now shows the pet, and a click on it opens the chat. The product logo menu comes with the same change. Deviation 3 still holds: `siteLayout` stays innermost and out of the 404's rendered tree, and the server's 404 answer is unchanged (status 404, one `<html>`, holocron's chrome).
+**Owner ask (2026-10-05): "Quero o pet na 404".** Every 404 now shows the pet, and a click on it opens the chat. The product logo menu comes with the same change. Deviation 3 still holds: `siteLayout` stays innermost and out of the 404's rendered tree, and the server's 404 answer is unchanged (status 404, one `<html>`, holocron's chrome).
 
 - **Mechanism.** `components/genie-pet.tsx` and `components/product-brand.tsx` start their pieces from module code once React has hydrated `<body>` (`components/hydration.ts`), not from an effect, since on a 404 no component of the site renders. The modules still load on a 404, by one of two paths:
   - under `vite dev`, spiceflow serializes `siteLayout` without rendering it, so the 404's payload names `GeniePet` and `ProductBrand`;
@@ -286,7 +286,7 @@ Open: Group 1's "CI passes on the PR" criterion, pending the PR.
 
 ### Lamp hero performance follow-up — 2026-10-05 (engineer, `fix/genie-hero-perf`)
 
-**Owner decision (Felipe, 2026-10-05): "Vira e otimiza depois".** The cutover went ahead with `/genie` at Lighthouse mobile performance 39 on workers.dev, below the 50 of the cutover's Decision 6, and this optimisation followed.
+**Owner decision (2026-10-05): "Vira e otimiza depois".** The cutover went ahead with `/genie` at Lighthouse mobile performance 39 on workers.dev, below the 50 of the cutover's Decision 6, and this optimisation followed.
 
 - **Measured cause.** Each frame of the lamp hero cost the page's main thread 50 to 80 ms: about 15 ms of drawing and 40 to 55 ms of canvas raster with three blur passes, in the frame's Commit, which Lighthouse filed under `worker-entry-*.js`. The 2.6 s film was about 35 long tasks and 6 s of total blocking time. The same build with the hero's effect switched off scored 55 locally, against 31.
 - **Design.** The film plays in a worker (`components/lamp-hero-worker.ts`) on a canvas layer over the page's canvas; the render function moved, as it was, to `components/lamp-hero-film.ts`.

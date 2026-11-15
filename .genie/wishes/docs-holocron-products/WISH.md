@@ -5,7 +5,7 @@
 | **Status** | IN_PROGRESS |
 | **Slug** | `docs-holocron-products` |
 | **Date** | 2026-10-04 |
-| **Author** | Felipe Rosa (plan drafted by Claude) |
+| **Author** | the owner (plan drafted by Claude) |
 | **Appetite** | small |
 | **Branch** | `wish/docs-holocron-products` |
 | **Repos touched** | `automagik-dev/docs` |
@@ -36,14 +36,14 @@ Makes the header follow the active product: GENIE on Genie pages, OMNI on Omni, 
 
 | # | Decision | Rationale |
 |---|----------|-----------|
-| 1 | The header logo follows the active product: GENIE on Genie pages, OMNI on Omni, MIKRO on mikro, and the logo link goes to that product's landing page. The product switcher shows each product's logo instead of its text name. The AUTOMAGIK logo has one site-level place, the footer. Every logo is white with a cyan and magenta offset for the dark background, and holocron's dark-mode invert is cancelled on all of them. | Owner requirements (Felipe, 2026-10-04). The logo link is one of them: he reported "when you click the logo it fallsback to genie". Source art: `genie-logo-light-png.png`, `omni-logo-light-png.png`, `mikro.png`, `automagik-logo-light-png.png` in the genie checkout's `.orca/drops/`, used as the spike's trimmed copies. |
+| 1 | The header logo follows the active product: GENIE on Genie pages, OMNI on Omni, MIKRO on mikro, and the logo link goes to that product's landing page. The product switcher shows each product's logo instead of its text name. The AUTOMAGIK logo has one site-level place, the footer. Every logo is white with a cyan and magenta offset for the dark background, and holocron's dark-mode invert is cancelled on all of them. | Owner requirements (2026-10-04). The logo link is one of them: the owner reported "when you click the logo it fallsback to genie". Source art: `genie-logo-light-png.png`, `omni-logo-light-png.png`, `mikro.png`, `automagik-logo-light-png.png` in the genie checkout's `.orca/drops/`, used as the spike's trimmed copies. |
 | 2 | Mechanism is the spike's, from the frozen snapshot: `site/components/product-brand.ts` (sha256 prefix `9f720bda57765140`), lines 344 to 387 of `site/style.css` (`b4e829d3b742ad0d`), and `productScript` with its `products` derivation in `site/vite.config.ts` (`0df903c279bea79f`). In production the custom entry's middleware does what the spike's dev server did: for `text/html` responses, `HTMLRewriter` sets `data-product` on `<html>` and prepends the spike's head script to `<head>`. | holocron 0.36.0 has no per-product logo (`productSchema` takes a name, icon and href), and its switcher is a native `<select>` (`nav-select.tsx`), whose open list the OS draws and cannot show images. Marking `<html>` on the server shows the right logo on first paint; `<html>` carries `suppressHydrationWarning`, so the extra attribute does not trip hydration. The client module must run inside holocron's bundle to share `spiceflow/react`'s router, so it mounts from the same site-wide layout as the pet. |
 | 3 | Products, slugs and landing pages come from `docs.json` the way the spike derives them: each product's first navigation page is its landing (`genie/index`, `omni/index`, `rlmx/index` today), its folder is its URL prefix, and its lowercased name is its slug (`genie`, `omni`, `mikro`). The logo link is routed to the landing before hydration by the head script's capture-phase click handler (through `window.__genieNavigate`, exposed by the client module, or a plain navigation before it loads) and after hydration by setting the link's `href` once React owns the node. | Owner requirement; the spike's fix, frozen. The landings answer holocron's built-in 308 to the folder URL, which this wish's logo-link check follows. Owner decision D (2026-10-04) moves mikro in `docs-holocron-cutover` Group 1; the landing then becomes `/mikro/index` with no code change. |
 | 4 | Share images: the middleware rewrites the `content` of `meta[property="og:image"]` and `meta[name="twitter:image"]` to `<origin>/brand/<slug>-logo.png`, and removes duplicates so exactly one of each remains. | holocron builds both from `holocronUrl('/api/og…')`, which now points at the gateway origin and answers 404 (plan review probe, `page.html`). `seo.metatags` alone does not fix `twitter:image`. The product logo is a working image with no renderer. |
 | 5 | Three more canaries, tagged like the brand wish's: `html[data-product="omni"] .slot-logo img`, `html[data-product="mikro"] .slot-logo img`, `div:has(> select[data-genie-logos])`, so the frozen `style.css` totals 27. | The plan review counted 27 hooks into holocron internals; these 3 live in the product block. |
 | 6 | PR CI runs the new UI groups in Chromium through `--all`; this wish's validation also runs `--products` in Firefox and WebKit. | Only the logo swap (`content: url()` on an `<img>`) is engine-sensitive; checking it per engine once per change to it is enough. |
-| 7 | Every ported or copied file is checked by sha256 prefix against the frozen snapshot `/home/genie/.genie/state-backups/holo-spike-2026-10-04-frozen/` in the group's validation. | The live spike kept changing during planning; the frozen snapshot is the source of truth. |
-| 8 | **Owner decisions at plan approval (Felipe, 2026-10-04, final; recorded through the question harness).** Hosting: Cloudflare Workers Paid ("Cloudflare Workers Paid (Recomendado)"); Vercel was considered and dropped because holocron has no Vercel target. A. Visitor IP: no per-IP rate limit for now, deferred by owner; trigger to revisit: abuse or the spend cap being hit. The gateway token gate, the hard daily spend cap with its reservation ledger, the input bounds (64 KB, no `system` role), `maxOutputTokens`, the step limit, `redirect: 'manual'` and the canonical-path guard stay. B. Retired-URL redirects: none ("não quero fazer redirect, consider this a fresh start; we will revamp the other product docs later"); only `/` goes to the Genie landing, as site navigation; retired pages answer 404. C. PR previews: none ("Sem previews", 2026-10-04); PRs run only `build` and `verify` with no secrets, so the preview-chat question is moot. D. mikro URLs: `rlmx/` moves to `mikro/` with no redirects; `/rlmx/*` answers 404. | Recorded as given; all five wishes are APPROVED on these terms. None changes this wish's files. |
+| 7 | Every ported or copied file is checked by sha256 prefix against the frozen snapshot `<GENIE_HOME>/state-backups/holo-spike-2026-10-04-frozen/` in the group's validation. | The live spike kept changing during planning; the frozen snapshot is the source of truth. |
+| 8 | **Owner decisions at plan approval (2026-10-04, final; recorded through the question harness).** Hosting: Cloudflare Workers Paid ("Cloudflare Workers Paid (Recomendado)"); Vercel was considered and dropped because holocron has no Vercel target. A. Visitor IP: no per-IP rate limit for now, deferred by owner; trigger to revisit: abuse or the spend cap being hit. The gateway token gate, the hard daily spend cap with its reservation ledger, the input bounds (64 KB, no `system` role), `maxOutputTokens`, the step limit, `redirect: 'manual'` and the canonical-path guard stay. B. Retired-URL redirects: none ("não quero fazer redirect, consider this a fresh start; we will revamp the other product docs later"); only `/` goes to the Genie landing, as site navigation; retired pages answer 404. C. PR previews: none ("Sem previews", 2026-10-04); PRs run only `build` and `verify` with no secrets, so the preview-chat question is moot. D. mikro URLs: `rlmx/` moves to `mikro/` with no redirects; `/rlmx/*` answers 404. | Recorded as given; all five wishes are APPROVED on these terms. None changes this wish's files. |
 
 ## Simplicity Case
 
@@ -57,7 +57,7 @@ Makes the header follow the active product: GENIE on Genie pages, OMNI on Omni, 
 **depends-on:** docs-holocron, docs-holocron-brand
 **blocks:** docs-holocron-chat, docs-holocron-cutover
 
-Starts after `docs-holocron-brand` merges, because it extends the `src/server.tsx`, `style.css` and `scripts/ui-check.mjs` that wish creates. Every source comes from the frozen snapshot `/home/genie/.genie/state-backups/holo-spike-2026-10-04-frozen/site/`; hashes recorded against it on 2026-10-04.
+Starts after `docs-holocron-brand` merges, because it extends the `src/server.tsx`, `style.css` and `scripts/ui-check.mjs` that wish creates. Every source comes from the frozen snapshot `<GENIE_HOME>/state-backups/holo-spike-2026-10-04-frozen/site/`; hashes recorded against it on 2026-10-04.
 
 ## Success Criteria
 
@@ -86,12 +86,12 @@ Starts after `docs-holocron-brand` merges, because it extends the `src/server.ts
 - Exact pins, no `^` or `~`, as set by `docs-holocron` and `docs-holocron-brand`.
 - Run wrangler as `npx wrangler`; it is not installed globally.
 - Local commands work on Linux and macOS; Windows is not a target.
-- Source of truth: `/home/genie/.genie/state-backups/holo-spike-2026-10-04-frozen/`, read-only; every ported file is hash-checked.
+- Source of truth: `<GENIE_HOME>/state-backups/holo-spike-2026-10-04-frozen/`, read-only; every ported file is hash-checked.
 - The header logo and its link follow the active product (GENIE, OMNI, MIKRO); the product switcher shows logos instead of names; AUTOMAGIK signs the footer; no logo is ever inverted.
 - Products, prefixes and landing pages are read from `docs.json`, never hard-coded.
 - `HOLOCRON_SKIP_BUILD_ERRORS` is never set.
 - No secret in git, CI logs, command lines or repository files.
-- Outward or irreversible steps (pushes to `main`, DNS, secrets, production deploys) go to Felipe through the question harness first.
+- Outward or irreversible steps (pushes to `main`, DNS, secrets, production deploys) go to the owner through the question harness first.
 - New user-facing copy (`aria-label`s included): no hashtags, no dash punctuation, no "not X, it's Y" construction.
 - A change that alters the generated deploy config (`wrangler.jsonc`, the Cloudflare Vite plugin, wrangler or the build entry) regenerates `scripts/expected-wrangler.json` with `node scripts/check-deploy-config.mjs . --write` in the same PR; the `build` job's drift check fails otherwise.
 - "Wishes in, PRs out" and "context framework" are never headings.
@@ -117,7 +117,7 @@ Starts after `docs-holocron-brand` merges, because it extends the `src/server.ts
 
 **Validation:**
 ```bash
-export SNAP=/home/genie/.genie/state-backups/holo-spike-2026-10-04-frozen/site
+export SNAP="<GENIE_HOME>/state-backups/holo-spike-2026-10-04-frozen/site"
 node -e 'const c=require("crypto"),fs=require("fs"),S=process.env.SNAP;const h=b=>c.createHash("sha256").update(b).digest("hex").slice(0,16);if(h(fs.readFileSync(S+"/vite.config.ts"))!=="0df903c279bea79f"){console.error("snapshot vite.config.ts");process.exit(1)}'
 npm ci
 npm run build
@@ -153,7 +153,7 @@ node scripts/ui-check.mjs --serve --all
 
 **Validation:**
 ```bash
-export SNAP=/home/genie/.genie/state-backups/holo-spike-2026-10-04-frozen/site
+export SNAP="<GENIE_HOME>/state-backups/holo-spike-2026-10-04-frozen/site"
 node -e 'const c=require("crypto"),fs=require("fs"),S=process.env.SNAP;const h=b=>c.createHash("sha256").update(b).digest("hex").slice(0,16);const src={"components/product-brand.ts":"9f720bda57765140","style.css":"b4e829d3b742ad0d"};const cp={"public/brand/omni-logo.png":"b1c3d8c2872fe998","public/brand/mikro-logo.png":"1bbcc571db9be606","public/brand/automagik-logo.png":"56ea82b76b4be436"};let ok=true;for(const[f,w]of Object.entries({...src,...cp}))if(h(fs.readFileSync(S+"/"+f))!==w){console.error("snapshot",f);ok=false}for(const[f,w]of Object.entries(cp))if(h(fs.readFileSync(f))!==w){console.error("repo",f);ok=false}process.exit(ok?0:1)'
 test "$(grep -c 'holocron-internal:' style.css)" -ge 27
 npm ci
