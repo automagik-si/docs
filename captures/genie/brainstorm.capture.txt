@@ -51,9 +51,9 @@ a um tipo oficial do /council, escolhido por flag, sem duplicar o council.js. Li
          +ame schemas, `tier` per lens, a `'per-lens'` value in the routing scanner, parallel type byte-for-byte unchanged. Linear NMSTX-766. N
          +ext route: wish
       24  - [DESIGN: genie-launch](brainstorms/genie-launch/DESIGN.md) — **reviewed SHIP 2026-09-29** (round 2, after FIX-FIRST): the launch fo
-          undation before Felipe's first public posts. README rewrite + `UPGRADING.md` (skills first, animated mascot, one-paste install), v6 d
+          undation before the owner's first public posts. README rewrite + `UPGRADING.md` (skills first, animated mascot, one-paste install), v6 d
           ocs down to ≤15 public skills-first pages, media (skill cards, simulated-terminal SOP videos backed by real captures, the real /wish
-          capture), then org and profile pages with Felipe approving each write. Tracked in Linear project "gtm - opensource" (NMSTX-739..771).
+          capture), then org and profile pages with the owner approving each write. Tracked in Linear project "gtm - opensource" (NMSTX-739..771).
            Next route: wish
       25  - [WISH: observe-skill-bundle](wishes/observe-skill-bundle/WISH.md) — **APPROVED 2026-09-17** (direct wish, no brainstorm): fix the P
           hoenix observability tooling merged in #2936 so it works for anyone running Phoenix locally, then ship it as the `observe` skill. The

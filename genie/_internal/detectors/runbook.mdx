@@ -34,7 +34,7 @@
 
 A row exists in the `teams` table with `status = 'in_progress'`, but the `worktree_path` recorded on that row no longer points at a directory on disk. `genie team ls` shows the team as alive and actionable, but any attempt to cd into the worktree, open a PR from it, or resume work against it fails because the files vanished. The detector fires one `rot.detected` event per tick naming the first offending team and carrying `total_missing` in `observed_state_json` so the operator knows whether they are looking at a single accident or a broader cleanup job.
 
-Concretely: Felipe has seen this after manual `rm -rf ~/workspace/…` sweeps, after disk-full truncations that nuked worktrees without touching PG, and after backfill migrations that populated `teams` from JSON snapshots without validating filesystem presence.
+Concretely: the maintainer has seen this after manual `rm -rf ~/workspace/…` sweeps, after disk-full truncations that nuked worktrees without touching PG, and after backfill migrations that populated `teams` from JSON snapshots without validating filesystem presence.
 
 ### Known root cause
 
@@ -89,7 +89,7 @@ If the detector fires more than 3× in an hour for distinct teams, suspect a bat
 
 The event payload carries both snapshots (capped at 200 entries each) plus up to 100 divergent entries with `team_id`, `kind`, and a human-readable `reason` — that is the triage payload you read first.
 
-Felipe's live-observed example: ghost teams showing as `in_progress` in `team ls` but "team not found" from `team disband`.
+The maintainer's live-observed example: ghost teams showing as `in_progress` in `team ls` but "team not found" from `team disband`.
 
 ### Known root cause
 
@@ -100,7 +100,7 @@ Two independent code paths disagree on what a team **is**:
 
 `sanitizeTeamName` in `src/lib/claude-native-teams.ts` converts non-alphanumeric runs to `-` and lowercases, so the two canonical keys are not 1:1. A team named `My Wish 42` lands as `My Wish 42` in PG and `my-wish-42/` on disk — any naming collision in sanitization (`foo bar` and `foo-bar` both collapse to `foo-bar`) produces permanent drift.
 
-Beyond the two-path split, upstream issue **#1234** (`(wish_file, repo_path)` partition root cause) and Felipe's minimum-viable fix **#1241** (warn on partition + throw on 0-row UPDATE) are the follow-ups that would eliminate the silent-prune trap. OSS issue **#1214** (`genie done` silent no-op) also feeds in: a `done` that silently drops leaves stale PG rows that Pattern 2 then surfaces.
+Beyond the two-path split, upstream issue **#1234** (`(wish_file, repo_path)` partition root cause) and the maintainer's minimum-viable fix **#1241** (warn on partition + throw on 0-row UPDATE) are the follow-ups that would eliminate the silent-prune trap. OSS issue **#1214** (`genie done` silent no-op) also feeds in: a `done` that silently drops leaves stale PG rows that Pattern 2 then surfaces.
 
 ### Known false-positive sources
 
@@ -245,7 +245,7 @@ psql -c "SELECT custom_name, team, COUNT(*), array_agg(id)
 
 An agent with `role = 'team-lead'` is in a live state (`spawning`, `working`, `idle`, `permission`, or `question`) but the team it leads has not emitted any `wish.dispatch`, `mailbox.delivery`, or `agent.lifecycle` event in the last 5 minutes. The lead is polling `genie status` against a team that has nothing to show.
 
-Felipe's live-observed version: a team-lead spawned hours ago is still visible in `genie ls` with state `idle`, but its team's dispatch queue has been empty since spawn and no worker ever picked up a task. The event payload carries `team_name`, `lead_agent_id`, `lead_state`, ISO `last_activity_at` (or null), computed `minutes_idle`, and `total_zombie_teams`.
+The maintainer's live-observed version: a team-lead spawned hours ago is still visible in `genie ls` with state `idle`, but its team's dispatch queue has been empty since spawn and no worker ever picked up a task. The event payload carries `team_name`, `lead_agent_id`, `lead_state`, ISO `last_activity_at` (or null), computed `minutes_idle`, and `total_zombie_teams`.
 
 ### Known root cause
 
@@ -296,7 +296,7 @@ Event payload: `parent_id`, ordered `child_ids` (capped at 32), `parent_errored_
 
 ### Known root cause
 
-Root cause is pattern-specific — not a single bug. Common producers observed by Felipe include: a parent agent that crashes mid-dispatch and emits an `error` event without a recovery; children that were mid-task and hit their own error chains because the parent's output was malformed or truncated; and resume-attempt loops that re-spawn the parent but never wake the children. The detector reads `executors.state` per candidate via `getCurrentExecutor` and cross-references the latest `genie_runtime_events` row with `kind = 'state'` and `data->>'new_state' IN ('running', 'idle', 'done')` after the parent's error timestamp.
+Root cause is pattern-specific — not a single bug. Common producers observed by the maintainer include: a parent agent that crashes mid-dispatch and emits an `error` event without a recovery; children that were mid-task and hit their own error chains because the parent's output was malformed or truncated; and resume-attempt loops that re-spawn the parent but never wake the children. The detector reads `executors.state` per candidate via `getCurrentExecutor` and cross-references the latest `genie_runtime_events` row with `kind = 'state'` and `data->>'new_state' IN ('running', 'idle', 'done')` after the parent's error timestamp.
 
 No OSS issue tracks the cascade mode directly as of 2026-04-18 — Pattern 6 surfaced during wish execution and has no historical ticket. File one from the detector payload when the first real cascade lands.
 
@@ -396,7 +396,7 @@ for m in <idle_member_ids>; do genie send '<your message>' --to "$m"; done
 
 A fresh agent spawns with `custom_name = X` in team `A` while another agent with `custom_name = X` previously existed in team `B` whose `teams.status = 'archived'`. The new agent's first user prompt (its topic seed) has Jaccard similarity below 0.25 against the archived agent's first user/assistant transcript turn when both are normalised (lowercased, punctuation stripped, tokenised, capped at the first 8 tokens).
 
-Felipe's live-observed example: spawning `engineer` in team `wish-42` where claude-code re-attaches to a disbanded `wish-17`'s `engineer` transcript — the worker starts executing `wish-17`'s goals against `wish-42`'s branch. OSS issue **#1215** tracks the substrate bug (agent rows not archived on disband); Pattern 8 surfaces the user-visible manifestation when disband archive-propagation lags or is skipped.
+The maintainer's live-observed example: spawning `engineer` in team `wish-42` where claude-code re-attaches to a disbanded `wish-17`'s `engineer` transcript — the worker starts executing `wish-17`'s goals against `wish-42`'s branch. OSS issue **#1215** tracks the substrate bug (agent rows not archived on disband); Pattern 8 surfaces the user-visible manifestation when disband archive-propagation lags or is skipped.
 
 Event payload: `new_agent_id`, `new_team`, `new_topic_seed` (first 256 chars), `conflicting_archived_agent_id`, `conflicting_archived_team`, `conflicting_archived_last_transcript_preview` (first 256 chars), `jaccard_similarity` (the numeric score, so operators can judge the heuristic's confidence), and `ghost_count`.
 
