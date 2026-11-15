@@ -17,15 +17,15 @@ This PR adds documentation for all 7.
 **Target repo:** automagik-dev/docs (this repo). Target file: `genie/cli/observability.mdx` (one file edit, no new pages).
 
 **Source-of-truth files:**
-- `/home/genie/workspace/agents/genie-docs/state/cli-help/genie/events/stream-follow.txt`
-- `/home/genie/workspace/agents/genie-docs/state/cli-help/genie/events/stream.txt`
-- `/home/genie/workspace/agents/genie-docs/state/cli-help/genie/events/subscribe.txt`
-- `/home/genie/workspace/agents/genie-docs/state/cli-help/genie/events/admin.txt`
-- `/home/genie/workspace/agents/genie-docs/state/cli-help/genie/events/enriched.txt`
-- `/home/genie/workspace/agents/genie-docs/state/cli-help/genie/events/timeline-v2.txt`
-- `/home/genie/workspace/agents/genie-docs/state/cli-help/genie/events/migrate.txt`
+- `<docs agent workspace>/state/cli-help/genie/events/stream-follow.txt`
+- `<docs agent workspace>/state/cli-help/genie/events/stream.txt`
+- `<docs agent workspace>/state/cli-help/genie/events/subscribe.txt`
+- `<docs agent workspace>/state/cli-help/genie/events/admin.txt`
+- `<docs agent workspace>/state/cli-help/genie/events/enriched.txt`
+- `<docs agent workspace>/state/cli-help/genie/events/timeline-v2.txt`
+- `<docs agent workspace>/state/cli-help/genie/events/migrate.txt`
 
-Authoritative re-capture if needed: `PATH=/home/genie/.bun/bin:$PATH genie events <subcmd> --help`.
+Authoritative re-capture if needed: `PATH=~/.bun/bin:$PATH genie events <subcmd> --help`.
 
 ## Execution groups
 

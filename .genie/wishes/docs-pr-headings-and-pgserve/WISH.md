@@ -13,8 +13,8 @@ Three small drift fixes bundled into one low-risk PR:
 **Target repo:** automagik-dev/docs (this repo). Touches 4 existing files.
 
 **Source-of-truth files:**
-- `/home/genie/workspace/repos/genie/CHANGELOG.md` — confirm pgserve bump entry
-- `/home/genie/workspace/repos/genie/package.json` — confirm pgserve version pin
+- `<genie checkout>/CHANGELOG.md` — confirm pgserve bump entry
+- `<genie checkout>/package.json` — confirm pgserve version pin
 
 ## Execution groups
 

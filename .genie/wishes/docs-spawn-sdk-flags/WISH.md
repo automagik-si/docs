@@ -4,7 +4,7 @@
 
 `genie spawn` gained a full set of SDK-executor flags for the `claude-sdk` provider (streaming, session resume, reasoning effort, turn/budget caps, initial prompt). The `genie/cli/spawn.mdx` page documents 16 of the 24 live flags. The 8 SDK flags are completely absent.
 
-This gap surfaced in the 2026-04-17 drift sweep from both the freshness-auditor and gap-finder lens specialists (signed by both). Triage synthesis: `/home/genie/workspace/genie-docs/reports/2026-04-17T18-45-sweep-synthesis.md`.
+This gap surfaced in the 2026-04-17 drift sweep from both the freshness-auditor and gap-finder lens specialists (signed by both). Triage synthesis: `<docs agent workspace>/reports/2026-04-17T18-45-sweep-synthesis.md`.
 
 **Target repo:** automagik-dev/docs (this repo). Page: `genie/cli/spawn.mdx`.
 
@@ -25,7 +25,7 @@ This gap surfaced in the 2026-04-17 drift sweep from both the freshness-auditor 
 | `--sdk-resume <session-id>` | SDK: resume a previous session by ID |
 | `--prompt <text>` | Initial prompt to send as the first user message |
 
-**Source of truth:** `/home/genie/workspace/genie-docs/state/cli-help/genie/spawn.txt` lines 23–34. If the captured file drifts from the live CLI, re-capture via `PATH=/home/genie/.bun/bin:$PATH genie spawn --help > /tmp/spawn-help.txt` and use the live output.
+**Source of truth:** `<docs agent workspace>/state/cli-help/genie/spawn.txt` lines 23–34. If the captured file drifts from the live CLI, re-capture via `PATH=~/.bun/bin:$PATH genie spawn --help > /tmp/spawn-help.txt` and use the live output.
 
 **Acceptance:**
 - All 8 flags appear in the existing options table, preserving the current table style and column order.

@@ -2,7 +2,7 @@
 
 ## Context
 
-automagik-dev/genie shipped 17 days of development (v4.260330.1 → v4.260416.5) since these docs were last updated. This wish closes the documentation drift for the Genie CLI only. Full drift audit lives at `/home/genie/workspace/genie-docs/reports/automagik-dev-drift-audit.md`.
+automagik-dev/genie shipped 17 days of development (v4.260330.1 → v4.260416.5) since these docs were last updated. This wish closes the documentation drift for the Genie CLI only. Full drift audit lives at `<docs agent workspace>/reports/automagik-dev-drift-audit.md`.
 
 **Target repo:** automagik-dev/docs (this repo). Pages live under `genie/`.
 
@@ -15,7 +15,7 @@ automagik-dev/genie shipped 17 days of development (v4.260330.1 → v4.260416.5)
 - `genie approve [options] <agent>` — "Approve an agent's output for merge"
 - `genie answer <name> <choice>` — "Answer a question for an agent"
 
-**Source of truth:** `/home/genie/workspace/repos/genie/src/term-commands/approval.ts` (the whole file — read it for flags, behavior, examples). Also capture `--help` live via `PATH=/home/genie/.bun/bin:$PATH genie approve --help` and `PATH=/home/genie/.bun/bin:$PATH genie answer --help`.
+**Source of truth:** `<genie checkout>/src/term-commands/approval.ts` (the whole file — read it for flags, behavior, examples). Also capture `--help` live via `PATH=~/.bun/bin:$PATH genie approve --help` and `PATH=~/.bun/bin:$PATH genie answer --help`.
 
 **Acceptance:** `approve` and `answer` both show up somewhere user-discoverable in the Genie CLI section with full flags, a one-paragraph use-case, and at least one code example.
 
@@ -23,7 +23,7 @@ automagik-dev/genie shipped 17 days of development (v4.260330.1 → v4.260416.5)
 
 **Deliverable:** `genie/cli/agents.mdx` description currently says the page covers "spawn, kill, stop, resume, ls, history, read, answer" — it omits `register`. Update the description to either include `register` or add a cross-link to `genie/cli/directory.mdx` where `register` already lives.
 
-**Source of truth:** `PATH=/home/genie/.bun/bin:$PATH genie agent register --help`.
+**Source of truth:** `PATH=~/.bun/bin:$PATH genie agent register --help`.
 
 **Acceptance:** description line is accurate; no broken cross-link introduced.
 
@@ -31,7 +31,7 @@ automagik-dev/genie shipped 17 days of development (v4.260330.1 → v4.260416.5)
 
 **Deliverable:** `genie/cli/dispatch.mdx` reset section (lines ~99–140) — add the `--yes, -y` flag to the options table with a one-line description ("skip interactive confirmation").
 
-**Source of truth:** git commit `820f5490 fix(state): register --yes/-y option on reset command` (2026-04-16) and `PATH=/home/genie/.bun/bin:$PATH genie reset --help`.
+**Source of truth:** git commit `820f5490 fix(state): register --yes/-y option on reset command` (2026-04-16) and `PATH=~/.bun/bin:$PATH genie reset --help`.
 
 **Acceptance:** `--yes, -y` documented in the options table of the reset section.
 
@@ -39,7 +39,7 @@ automagik-dev/genie shipped 17 days of development (v4.260330.1 → v4.260416.5)
 
 **Deliverable:** Add a subsection (or `<Warning>` callout) to `genie/concepts/wishes.mdx` covering the new drift-detection feature from commit `dcf23e60 feat(wish-state): detect WISH.md drift and fail loud on stale state` (2026-04-15). Explain: what triggers it, the exact error message users will see, recovery steps.
 
-**Source of truth:** `/home/genie/workspace/repos/genie/src/term-commands/state.ts`.
+**Source of truth:** `<genie checkout>/src/term-commands/state.ts`.
 
 **Acceptance:** a user encountering the drift error can find an explanation + recovery in the wishes doc.
 

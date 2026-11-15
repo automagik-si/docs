@@ -2,18 +2,18 @@
 
 ## Context
 
-Genie dev shipped a full self-healing detectors feature (4 PRs: #1236 group 3c high-risk detectors, #1237 group 3a low-risk detectors, #1242 group 5 runbook seed, #1244 group 4 tail filter) between 2026-04-17 and 2026-04-20. The detectors runbook is authoritative at `/home/genie/workspace/repos/genie/docs/detectors/runbook.md` and `/home/genie/workspace/repos/genie/docs/detectors/schema-audit.md`. None of this has been surfaced in `automagik-dev/docs` — `grep -ri detector docs/genie/` returns only 1 incidental mention in `config/hooks.mdx`.
+Genie dev shipped a full self-healing detectors feature (4 PRs: #1236 group 3c high-risk detectors, #1237 group 3a low-risk detectors, #1242 group 5 runbook seed, #1244 group 4 tail filter) between 2026-04-17 and 2026-04-20. The detectors runbook is authoritative at `<genie checkout>/docs/detectors/runbook.md` and `<genie checkout>/docs/detectors/schema-audit.md`. None of this has been surfaced in `automagik-dev/docs` — `grep -ri detector docs/genie/` returns only 1 incidental mention in `config/hooks.mdx`.
 
 This PR creates the first user-facing docs page for detectors.
 
 **Target repo:** automagik-dev/docs (this repo). Target file: new page.
 
 **Source-of-truth files (read, then summarize — do NOT copy-paste the entire runbook):**
-- `/home/genie/workspace/repos/genie/docs/detectors/runbook.md` — 8-pattern triage guide (authoritative)
-- `/home/genie/workspace/repos/genie/docs/detectors/schema-audit.md` — schema drift detection
-- `/home/genie/workspace/agents/genie-docs/state/cli-help/genie/events/stream-follow.txt` — `--kind <prefix>` glob example `detector.*`
-- Existing page to cross-link from: `/home/genie/workspace/repos/docs/genie/cli/observability.mdx`
-- docs.json: `/home/genie/workspace/repos/docs/docs.json` (add new page under an appropriate group)
+- `<genie checkout>/docs/detectors/runbook.md` — 8-pattern triage guide (authoritative)
+- `<genie checkout>/docs/detectors/schema-audit.md` — schema drift detection
+- `<docs agent workspace>/state/cli-help/genie/events/stream-follow.txt` — `--kind <prefix>` glob example `detector.*`
+- Existing page to cross-link from: `genie/cli/observability.mdx`
+- docs.json: `docs.json` (add new page under an appropriate group)
 
 ## Execution groups
 
@@ -41,7 +41,7 @@ This PR creates the first user-facing docs page for detectors.
 
 **Deliverable:** add the new page to `docs.json` under `navigation.products[product=Genie]`. Introduce a new group "Observability" (between "Architecture" and "Hacks & Tips") OR add to an existing "Architecture" group — whichever reads better. Check sibling site structure for precedent.
 
-**Source of truth:** `/home/genie/workspace/repos/docs/docs.json` — Genie product navigation.
+**Source of truth:** `docs.json` — Genie product navigation.
 
 **Acceptance:** `mint broken-links` + Mintlify dev server ingests `docs.json` without error. New page reachable from Genie tab.
 

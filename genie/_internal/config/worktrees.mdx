@@ -21,14 +21,14 @@ A known bug in Claude Code can flip `core.bare=true` on the parent repository vi
 ### How It Works
 
 ```text
-genie team create auth-fix --repo /home/user/myproject --wish auth-bug
+genie team create auth-fix --repo '<workspace>/myproject' --wish auth-bug
          │
          ▼
   1. Resolve worktree base directory
      (~/.genie/worktrees/ or config terminal.worktreeBase)
          │
          ▼
-  2. git clone --shared /home/user/myproject ~/.genie/worktrees/myproject/auth-fix
+  2. git clone --shared '<workspace>/myproject' ~/.genie/worktrees/myproject/auth-fix
          │
          ▼
   3. git checkout -b feat/auth-fix   (team name IS the branch name)
@@ -89,7 +89,7 @@ When a team is created, the worktree path is computed as:
 ```
 
 For example:
-- Repo: `/home/user/projects/my-api`
+- Repo: `<workspace>/my-api`
 - Team: `feat/auth-fix`
 - Result: `~/.genie/worktrees/my-api/feat--auth-fix`
 
@@ -102,9 +102,9 @@ Each team stores its full configuration at `~/.genie/teams/<safe-name>.json`:
 ```json
 {
   "name": "feat/auth-fix",
-  "repo": "/home/user/projects/my-api",
+  "repo": "<workspace>/my-api",
   "baseBranch": "dev",
-  "worktreePath": "/home/user/.genie/worktrees/my-api/feat--auth-fix",
+  "worktreePath": "<GENIE_HOME>/worktrees/my-api/feat--auth-fix",
   "leader": "team-lead",
   "members": ["team-lead", "engineer", "reviewer"],
   "status": "in_progress",
