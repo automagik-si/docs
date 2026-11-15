@@ -49,7 +49,7 @@ Applies the launch-video design system to the holocron site: neon design B token
 | 9 | `components/pet/animation.json` is stored minified, equal after parsing to the snapshot's file. | It is 781 lines of data; minified it is one line (7,873 bytes) and keeps this wish within the insertion band. |
 | 10 | The pet sets its spritesheet (1.8 MB) as a background only after the window `load` event. | It never competes with first paint; the browser caches it across pages. |
 | 11 | PR CI runs the UI check in Chromium only. | Firefox and WebKit run in `docs-holocron-products`' own validation, where engine differences (`content: url()` on images) matter; keeping CI on one engine keeps PR runs short. |
-| 12 | The frozen, read-only snapshot `/home/genie/.genie/state-backups/holo-spike-2026-10-04-frozen/` is the only source. Every file this wish ports or copies is checked by sha256 prefix, both in the snapshot and in the repository, in the group's validation. | The live spike and the mutable archive kept changing during planning; a frozen source makes the ports reviewable. |
+| 12 | The frozen, read-only snapshot `<GENIE_HOME>/state-backups/holo-spike-2026-10-04-frozen/` is the only source. Every file this wish ports or copies is checked by sha256 prefix, both in the snapshot and in the repository, in the group's validation. | The live spike and the mutable archive kept changing during planning; a frozen source makes the ports reviewable. |
 | 13 | **Owner decisions at plan approval (2026-10-04, final; recorded through the question harness).** Hosting: Cloudflare Workers Paid ("Cloudflare Workers Paid (Recomendado)"); Vercel was considered and dropped because holocron has no Vercel target. A. Visitor IP: no per-IP rate limit for now, deferred by owner; trigger to revisit: abuse or the spend cap being hit. The gateway token gate, the hard daily spend cap with its reservation ledger, the input bounds (64 KB, no `system` role), `maxOutputTokens`, the step limit, `redirect: 'manual'` and the canonical-path guard stay. B. Retired-URL redirects: none ("não quero fazer redirect, consider this a fresh start; we will revamp the other product docs later"); only `/` goes to the Genie landing, as site navigation; retired pages answer 404. C. PR previews: none ("Sem previews", 2026-10-04); PRs run only `build` and `verify` with no secrets, so the preview-chat question is moot. D. mikro URLs: `rlmx/` moves to `mikro/` with no redirects; `/rlmx/*` answers 404. | Recorded as given; all five wishes are APPROVED on these terms. None changes this wish's files. |
 
 ## Simplicity Case
@@ -64,7 +64,7 @@ Applies the launch-video design system to the holocron site: neon design B token
 **depends-on:** docs-holocron
 **blocks:** docs-holocron-products, docs-holocron-chat, docs-holocron-cutover
 
-Starts after `docs-holocron` merges to `main`; branch `wish/docs-holocron-brand` is cut from `origin/main`. Every source comes from the frozen snapshot `/home/genie/.genie/state-backups/holo-spike-2026-10-04-frozen/site/`; the hashes below were recorded against it on 2026-10-04. The original art is under the genie checkout's untracked `.orca/drops/` and `.genie/brainstorms/genie-launch/`.
+Starts after `docs-holocron` merges to `main`; branch `wish/docs-holocron-brand` is cut from `origin/main`. Every source comes from the frozen snapshot `<GENIE_HOME>/state-backups/holo-spike-2026-10-04-frozen/site/`; the hashes below were recorded against it on 2026-10-04. The original art is under the genie checkout's untracked `.orca/drops/` and `.genie/brainstorms/genie-launch/`.
 
 ## Success Criteria
 
@@ -95,7 +95,7 @@ Starts after `docs-holocron` merges to `main`; branch `wish/docs-holocron-brand`
 - Exact pins, no `^` or `~`: `@holocron.so/vite` 0.36.0, `vite` 8.3.2, `@cloudflare/vite-plugin` 1.62.5, `wrangler` 4.147.0, `react` 19.3.0, `react-dom` 19.3.0; `playwright` pinned exactly when added.
 - Run wrangler as `npx wrangler`; it is not installed globally.
 - Local commands work on Linux and macOS; Windows is not a target.
-- Source of truth: `/home/genie/.genie/state-backups/holo-spike-2026-10-04-frozen/`, read-only; every ported file is hash-checked.
+- Source of truth: `<GENIE_HOME>/state-backups/holo-spike-2026-10-04-frozen/`, read-only; every ported file is hash-checked.
 - Brand tokens: `#0B0B12` surface, `#E8E6F0` text, `#FF3FF5` magenta, `#5EF2FF` cyan, `#2A2438` border.
 - Fonts: Geist and JetBrains Mono.
 - The logo is the triskele plus the GENIE wordmark, never the mascot face; the dark-mode invert is cancelled.
@@ -149,7 +149,7 @@ Starts after `docs-holocron` merges to `main`; branch `wish/docs-holocron-brand`
 
 **Validation:**
 ```bash
-export SNAP=/home/genie/.genie/state-backups/holo-spike-2026-10-04-frozen/site
+export SNAP="<GENIE_HOME>/state-backups/holo-spike-2026-10-04-frozen/site"
 node -e 'const c=require("crypto"),fs=require("fs"),S=process.env.SNAP;const h=b=>c.createHash("sha256").update(b).digest("hex").slice(0,16);const src={"style.css":"b4e829d3b742ad0d"};const cp={"public/brand/genie-logo.png":"af3c8fffffa8ff6d","public/brand/genie-favicon.png":"4f998b69b81f2f96","public/fonts/geist-latin.woff2":"19f9c92546aa300c","public/fonts/jetbrains-mono-latin.woff2":"83c005d49d8a6a50"};let ok=true;for(const[f,w]of Object.entries({...src,...cp}))if(h(fs.readFileSync(S+"/"+f))!==w){console.error("snapshot",f);ok=false}for(const[f,w]of Object.entries(cp))if(h(fs.readFileSync(f))!==w){console.error("repo",f);ok=false}process.exit(ok?0:1)'
 test "$(grep -c 'holocron-internal:' style.css)" -ge 24
 npm ci
@@ -189,7 +189,7 @@ node scripts/ui-check.mjs --serve
 
 **Validation:**
 ```bash
-export SNAP=/home/genie/.genie/state-backups/holo-spike-2026-10-04-frozen/site
+export SNAP="<GENIE_HOME>/state-backups/holo-spike-2026-10-04-frozen/site"
 node -e 'const c=require("crypto"),fs=require("fs"),S=process.env.SNAP;const h=b=>c.createHash("sha256").update(b).digest("hex").slice(0,16);const src={"components/genie-pet.ts":"daf41943fbb81ec1","components/lamp-hero.tsx":"2b5053f79700582a"};const cp={"public/genie-hero/lamp.png":"af66b73273569de5","public/genie-hero/face.png":"89c995e76fc55f3e","public/genie-hero/face-points.json":"30104120432dff19","public/pet/spritesheet.webp":"431aa00ad989e502"};let ok=true;for(const[f,w]of Object.entries({...src,...cp}))if(h(fs.readFileSync(S+"/"+f))!==w){console.error("snapshot",f);ok=false}for(const[f,w]of Object.entries(cp))if(h(fs.readFileSync(f))!==w){console.error("repo",f);ok=false}for(const f of[S+"/components/pet/animation.json","components/pet/animation.json"])if(h(JSON.stringify(JSON.parse(fs.readFileSync(f,"utf8"))))!=="ea20b7c43cda5bfd"){console.error("animation",f);ok=false}process.exit(ok?0:1)'
 npm ci
 npm run build
