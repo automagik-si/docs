@@ -12,11 +12,11 @@ This PR aligns 12 skill descriptions to their authoritative `SKILL.md` source.
 
 ## Skills to sync (with full source-of-truth)
 
-For each skill below, the docs `description:` must match the exact `description:` line in the corresponding `/home/genie/workspace/repos/genie/skills/<name>/SKILL.md` frontmatter. Verify each by reading the source file.
+For each skill below, the docs `description:` must match the exact `description:` line in the corresponding `<genie checkout>/skills/<name>/SKILL.md` frontmatter. Verify each by reading the source file.
 
 | Skill | Doc file | Source file |
 |-------|----------|-------------|
-| genie | `genie/skills/genie.mdx` | `/home/genie/workspace/repos/genie/skills/genie/SKILL.md` |
+| genie | `genie/skills/genie.mdx` | `<genie checkout>/skills/genie/SKILL.md` |
 | brainstorm | `genie/skills/brainstorm.mdx` | `.../skills/brainstorm/SKILL.md` |
 | wish | `genie/skills/wish.mdx` | `.../skills/wish/SKILL.md` |
 | review | `genie/skills/review.mdx` | `.../skills/review/SKILL.md` |

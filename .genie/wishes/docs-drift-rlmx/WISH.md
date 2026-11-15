@@ -2,9 +2,9 @@
 
 ## Context
 
-automagik-dev/rlmx shipped 13 days of development (v0.260330.12 → v0.260412.2). The `rlmx` binary is currently broken on this machine (dangling symlink — see memory `reference_rlmx_broken.md`), so source-read the CLI surface from `/home/genie/workspace/repos/rlmx/src/cli.ts`.
+automagik-dev/rlmx shipped 13 days of development (v0.260330.12 → v0.260412.2). The `rlmx` binary is currently broken on this machine (dangling symlink — see memory `reference_rlmx_broken.md`), so source-read the CLI surface from `<rlmx checkout>/src/cli.ts`.
 
-Full audit: `/home/genie/workspace/genie-docs/reports/automagik-dev-drift-audit.md`.
+Full audit: `<docs agent workspace>/reports/automagik-dev-drift-audit.md`.
 
 **Target repo:** automagik-dev/docs. Pages under `rlmx/`.
 
@@ -21,9 +21,9 @@ For each command, document:
 - What it outputs
 
 **Source of truth:**
-- `/home/genie/workspace/repos/rlmx/src/cli.ts` (lines 52–101 define these commands)
-- `/home/genie/workspace/repos/rlmx/README.md` for narrative context
-- `/home/genie/workspace/repos/rlmx/src/commands/` for individual implementations if needed
+- `<rlmx checkout>/src/cli.ts` (lines 52–101 define these commands)
+- `<rlmx checkout>/README.md` for narrative context
+- `<rlmx checkout>/src/commands/` for individual implementations if needed
 
 **Acceptance:** Each of the four commands has a labeled subsection with signature, flags table, example, and an "Outputs" note. Users discovering these via `rlmx --help` (when the binary is fixed) will find complete docs.
 

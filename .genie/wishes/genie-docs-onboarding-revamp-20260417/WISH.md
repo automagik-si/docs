@@ -199,7 +199,7 @@ Wave 1 runs four content groups in parallel (each author writes its own page; no
 
 **Validation:**
 ```bash
-cd /home/genie/workspace/repos/docs
+cd '<docs checkout>'
 for f in genie/index.mdx genie/features.mdx genie/installation.mdx genie/quickstart.mdx; do
   # frontmatter icon
   head -10 "$f" | grep -q '^icon:' || { echo "FAIL: no icon in $f"; exit 1; }
@@ -243,7 +243,7 @@ echo OK
 
 **Validation:**
 ```bash
-cd /home/genie/workspace/repos/docs/genie/skills
+cd '<docs checkout>'/genie/skills
 # No delegate language
 ! grep -iE 'delegate to' wizard.mdx || { echo FAIL spec-doc language; exit 1; }
 # All skill mentions are hyperlinked (if /brainstorm appears, it must be in a link)
@@ -280,7 +280,7 @@ echo OK
    - Step 5 — "Review and ship" (link to `/genie/skills/review` + `/genie/skills/work`).
    - Step 6 — "Monitor what you shipped" (`genie status` + `genie events list --since 5m` + link to `/genie/skills/pm`).
 3. Below the `<Steps>`: `<CardGroup>` with "Something broke" (→ `/genie/skills/fix`) and "Go deeper" (→ `/genie/skills/loop-overview`).
-4. No new CLI commands invented — every command cited is present in `/home/genie/workspace/repos/genie/` or the CLI `--help` output at `/home/genie/workspace/genie-docs/state/cli-help/genie/`.
+4. No new CLI commands invented — every command cited is present in `<genie checkout>/` or the CLI `--help` output at `<docs agent workspace>/state/cli-help/genie/`.
 
 **Acceptance Criteria:**
 - [ ] File exists at `genie/onboarding.mdx`.
@@ -291,7 +291,7 @@ echo OK
 
 **Validation:**
 ```bash
-cd /home/genie/workspace/repos/docs/genie
+cd '<docs checkout>'/genie
 test -f onboarding.mdx
 steps=$(grep -c '<Step ' onboarding.mdx)
 [ "$steps" -eq 6 ] || { echo "FAIL: expected 6 Steps, got $steps"; exit 1; }
@@ -335,7 +335,7 @@ echo OK
 
 **Validation:**
 ```bash
-cd /home/genie/workspace/repos/docs/genie/skills
+cd '<docs checkout>'/genie/skills
 test -f loop-overview.mdx
 grep -q '<Steps>' loop-overview.mdx
 grep -q '<CardGroup' loop-overview.mdx
@@ -371,7 +371,7 @@ echo OK
 
 **Validation:**
 ```bash
-cd /home/genie/workspace/repos/docs
+cd '<docs checkout>'
 python3 -c "
 import json, sys
 d = json.load(open('docs.json'))

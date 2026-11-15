@@ -2,7 +2,7 @@
 
 ## Context
 
-The 2026-04-17 sweep's consistency-checker and gap-finder surfaced a cross-cutting polish backlog. Each item is low-risk individually but they accumulate. Bundling into one PR keeps the noise-to-signal low. Triage synthesis: `/home/genie/workspace/genie-docs/reports/2026-04-17T18-45-sweep-synthesis.md`.
+The 2026-04-17 sweep's consistency-checker and gap-finder surfaced a cross-cutting polish backlog. Each item is low-risk individually but they accumulate. Bundling into one PR keeps the noise-to-signal low. Triage synthesis: `<docs agent workspace>/reports/2026-04-17T18-45-sweep-synthesis.md`.
 
 **Target repo:** automagik-dev/docs (this repo). Scope: cross-cutting.
 
@@ -18,7 +18,7 @@ The 2026-04-17 sweep's consistency-checker and gap-finder surfaced a cross-cutti
 **Scope:** 6 files, 18 total occurrences. Run this first to see current state:
 
 ```bash
-grep -rn "worker" /home/genie/workspace/repos/docs/genie --include="*.mdx"
+grep -rn "worker" genie --include="*.mdx"
 ```
 
 Files known to have occurrences: `genie/architecture/state.mdx` (2), `genie/architecture/postgres.mdx` (1), `genie/architecture/scheduler.mdx` (3), `genie/architecture/transcripts.mdx` (6), `genie/architecture/overview.mdx` (1), `genie/config/files.mdx` (5).
@@ -40,8 +40,8 @@ Files known to have occurrences: `genie/architecture/state.mdx` (2), `genie/arch
 **Scope:** find untagged blocks with:
 
 ```bash
-grep -rn '^```$' /home/genie/workspace/repos/docs/genie --include="*.mdx"
-grep -rn '^```[ ]*$' /home/genie/workspace/repos/docs/genie --include="*.mdx"
+grep -rn '^```$' genie --include="*.mdx"
+grep -rn '^```[ ]*$' genie --include="*.mdx"
 ```
 
 **Rule:** add the obvious language (`bash`, `typescript`, `json`, `yaml`, `mdx`, `text`). If the block is shell terminal output, use `text` or `bash` with a `Terminal` label (matching existing style on `cli/dispatch.mdx`).
@@ -53,7 +53,7 @@ grep -rn '^```[ ]*$' /home/genie/workspace/repos/docs/genie --include="*.mdx"
 **Scope:** grep for placeholders that use camelCase or mixedCase inside angle brackets:
 
 ```bash
-grep -rn '<[a-z][a-zA-Z]*[A-Z]' /home/genie/workspace/repos/docs/genie --include="*.mdx"
+grep -rn '<[a-z][a-zA-Z]*[A-Z]' genie --include="*.mdx"
 ```
 
 **Rule:** convert `<routeId>` → `<route-id>`, `<sessionName>` → `<session-name>`, etc. Kebab-case is canonical.

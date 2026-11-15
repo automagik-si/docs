@@ -2,7 +2,7 @@
 
 ## Context
 
-Six small drifts surfaced in the 2026-04-17 sweep. Individually each is one edit; bundling them into one PR keeps the reviewer context small. Triage synthesis: `/home/genie/workspace/genie-docs/reports/2026-04-17T18-45-sweep-synthesis.md`.
+Six small drifts surfaced in the 2026-04-17 sweep. Individually each is one edit; bundling them into one PR keeps the reviewer context small. Triage synthesis: `<docs agent workspace>/reports/2026-04-17T18-45-sweep-synthesis.md`.
 
 **Target repo:** automagik-dev/docs (this repo). Pages: `genie/cli/infrastructure.mdx`, wherever `genie ls` is documented, wherever `genie setup` is documented, wherever `genie answer` is documented.
 
@@ -14,7 +14,7 @@ Six small drifts surfaced in the 2026-04-17 sweep. Individually each is one edit
 
 **Deliverable:** Add `--fix` to the flags table with description from live help: "auto-fix: kill zombie postgres, clean shared memory, restart daemon" (paraphrase acceptable — keep it to one line).
 
-**Source:** `state/cli-help/genie/doctor.txt` (re-capture with `PATH=/home/genie/.bun/bin:$PATH genie doctor --help` if stale).
+**Source:** `state/cli-help/genie/doctor.txt` (re-capture with `PATH=~/.bun/bin:$PATH genie doctor --help` if stale).
 
 ### Group 2 — `genie serve` auto-starts omni bridge
 

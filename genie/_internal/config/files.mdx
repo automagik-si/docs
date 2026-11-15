@@ -207,7 +207,7 @@ defaults:
     - "^git push.*--force"
 
 repos:
-  /home/user/myproject:
+  "<checkout>":
     inherit: global    # or "none" to start fresh
     allow:
       - Write
@@ -255,11 +255,11 @@ Genie records what it installed, and where, at `~/.genie/skills-install.json`:
 ```json
 {
   "ref": "v5.260831.6",
-  "source": "local:/home/you/.genie/skills",
+  "source": "local:<GENIE_HOME>/skills",
   "cliVersion": "1.5.23",
   "inventory": ["wish", "work", "review", "..."],
-  "agentDirs": ["/home/you/.claude/skills", "/home/you/.agents/skills"],
-  "dirDigests": { "/home/you/.claude/skills/wish": "…" },
+  "agentDirs": ["~/.claude/skills", "~/.agents/skills"],
+  "dirDigests": { "~/.claude/skills/wish": "…" },
   "installedAt": "2026-08-31T12:00:00.000Z"
 }
 ```

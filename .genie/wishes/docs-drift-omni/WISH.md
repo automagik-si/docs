@@ -2,7 +2,7 @@
 
 ## Context
 
-automagik-dev/omni shipped 14 days of development (v2.260326.1 → v2.260409.6). This wish closes Omni docs drift. Full audit: `/home/genie/workspace/genie-docs/reports/automagik-dev-drift-audit.md`.
+automagik-dev/omni shipped 14 days of development (v2.260326.1 → v2.260409.6). This wish closes Omni docs drift. Full audit: `<docs agent workspace>/reports/automagik-dev-drift-audit.md`.
 
 **Target repo:** automagik-dev/docs. Pages under `omni/`.
 
@@ -18,7 +18,7 @@ automagik-dev/omni shipped 14 days of development (v2.260326.1 → v2.260409.6).
 - `omni turns close-all [options]` — Bulk close all open turns (requires `--confirm`)
 - `omni turns stats` — Show aggregate turn metrics
 
-**Source of truth:** `PATH=/home/genie/.bun/bin:$PATH omni turns --help` plus each subcommand's `--help`. Also read `/home/genie/workspace/repos/omni/packages/cli/src/commands/turns/` for context.
+**Source of truth:** `PATH=~/.bun/bin:$PATH omni turns --help` plus each subcommand's `--help`. Also read `<omni checkout>/packages/cli/src/commands/turns/` for context.
 
 **Acceptance:** Full turns section with flags, descriptions, one usage example per subcommand. `close-all` must clearly call out that `--confirm` is required.
 
@@ -26,7 +26,7 @@ automagik-dev/omni shipped 14 days of development (v2.260326.1 → v2.260409.6).
 
 **Deliverable:** `omni/cli/messaging.mdx` (lines ~380–390, film examples) — add example usage of `--aspect-ratio 9:16` and `--no-audio`. Default is `16:9`; document both options.
 
-**Source of truth:** `PATH=/home/genie/.bun/bin:$PATH omni film --help`.
+**Source of truth:** `PATH=~/.bun/bin:$PATH omni film --help`.
 
 **Acceptance:** At least one example in the film section uses `--aspect-ratio`, and `--no-audio` is documented in the options table.
 
@@ -34,7 +34,7 @@ automagik-dev/omni shipped 14 days of development (v2.260326.1 → v2.260409.6).
 
 **Deliverable:** `omni/cli/messaging.mdx` — add a dedicated `## omni imagine` subsection (currently only mentioned in passing). Cover: the command signature, typical prompt style, output path, any flags from `--help`.
 
-**Source of truth:** `PATH=/home/genie/.bun/bin:$PATH omni imagine --help`.
+**Source of truth:** `PATH=~/.bun/bin:$PATH omni imagine --help`.
 
 **Acceptance:** `imagine` has the same level of detail as `film` in the messaging doc.
 
@@ -42,7 +42,7 @@ automagik-dev/omni shipped 14 days of development (v2.260326.1 → v2.260409.6).
 
 **Deliverable:** `omni/cli/debug.mdx` — add a short note documenting the `dead-letters` command (visible via `omni --all`, not in default help). Cover: when to use it, what it shows, that it is debug-only.
 
-**Source of truth:** `/home/genie/workspace/repos/omni/packages/cli/src/commands/dead-letters.ts` and `PATH=/home/genie/.bun/bin:$PATH omni --all | grep -i dead`.
+**Source of truth:** `<omni checkout>/packages/cli/src/commands/dead-letters.ts` and `PATH=~/.bun/bin:$PATH omni --all | grep -i dead`.
 
 **Acceptance:** a user hitting a stuck message queue can find guidance in the debug doc.
 

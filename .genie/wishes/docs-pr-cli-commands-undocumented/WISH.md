@@ -10,20 +10,20 @@ Audit revealed 4 real CLI commands and 2 docs from the upstream `automagik-dev/g
 | `genie failed` | `cli-help/failed.txt` | `genie/cli/dispatch.mdx` |
 | `genie template` | `cli-help/template.txt` (board template management) | `genie/cli/boards.mdx` |
 | `genie wipe` (script) | new in PR #1240, repo file `scripts/genie-wipe` | `genie/cli/database.mdx` (Danger zone subsection) |
-| Spawn auto-resume | `/home/genie/workspace/repos/genie/docs/SPAWN-AUTO-RESUME.md` | `genie/cli/spawn.mdx` |
-| Spawn team-resolution | `/home/genie/workspace/repos/genie/docs/SPAWN-TEAM-RESOLUTION.md` | `genie/cli/spawn.mdx` |
+| Spawn auto-resume | `<genie checkout>/docs/SPAWN-AUTO-RESUME.md` | `genie/cli/spawn.mdx` |
+| Spawn team-resolution | `<genie checkout>/docs/SPAWN-TEAM-RESOLUTION.md` | `genie/cli/spawn.mdx` |
 
 **Target repo:** automagik-dev/docs (this repo). Touches 4 existing files; no new pages.
 
 **Source-of-truth files:**
-- `/home/genie/workspace/agents/genie-docs/state/cli-help/genie/blocked.txt`
-- `/home/genie/workspace/agents/genie-docs/state/cli-help/genie/failed.txt`
-- `/home/genie/workspace/agents/genie-docs/state/cli-help/genie/template.txt`
-- `/home/genie/workspace/repos/genie/scripts/genie-wipe` (or wherever the script lives — confirm via `find /home/genie/workspace/repos/genie -name 'genie-wipe' -o -name 'wipe*'`)
-- `/home/genie/workspace/repos/genie/docs/SPAWN-AUTO-RESUME.md`
-- `/home/genie/workspace/repos/genie/docs/SPAWN-TEAM-RESOLUTION.md`
+- `<docs agent workspace>/state/cli-help/genie/blocked.txt`
+- `<docs agent workspace>/state/cli-help/genie/failed.txt`
+- `<docs agent workspace>/state/cli-help/genie/template.txt`
+- `<genie checkout>/scripts/genie-wipe` (or wherever the script lives — confirm via `find '<genie checkout>' -name 'genie-wipe' -o -name 'wipe*'`)
+- `<genie checkout>/docs/SPAWN-AUTO-RESUME.md`
+- `<genie checkout>/docs/SPAWN-TEAM-RESOLUTION.md`
 
-Re-capture if needed: `PATH=/home/genie/.bun/bin:$PATH genie <cmd> --help`.
+Re-capture if needed: `PATH=~/.bun/bin:$PATH genie <cmd> --help`.
 
 ## Execution groups
 
