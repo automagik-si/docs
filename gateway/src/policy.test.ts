@@ -24,7 +24,7 @@ const { createGateway, NOTICE_DAILY_BUDGET_REACHED, NOTICE_RATE_LIMIT_REACHED } 
 
 const TOKEN = 'k3y-for-tests-only-0123456789abcdef'
 const SITE = 'https://docs.automagik.dev'
-const PREVIEW = 'https://automagik-docs.felipehowit.workers.dev'
+const PREVIEW = 'https://preview.example'
 const DOCS_ORIGINS = parseOrigins(`${SITE},${PREVIEW}`)
 
 describe('isAuthorized', () => {
