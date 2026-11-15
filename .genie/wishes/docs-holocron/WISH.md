@@ -115,7 +115,7 @@ Docs PR #89 (`feat/genie-v6-launch`) merged into docs `main` on 2026-10-03 at 20
 - Run wrangler as `npx wrangler` locally and as `npx --yes wrangler@4.147.0` in jobs that hold secrets; it is not installed globally.
 - Local commands work on Linux and macOS; Windows is not a target. CI uses `ubuntu-latest` with `actions/setup-node` `node-version: 24`.
 - Worker names: site `automagik-docs`, gateway `automagik-docs-chat`.
-- Gateway origin: `https://agent.docs.automagik.dev` (decision 22), recorded once as `GATEWAY_ORIGIN` in `vite.config.ts`. Pre-cutover site: `https://automagik-docs.felipehowit.workers.dev` (account workers.dev subdomain `felipehowit`).
+- Gateway origin: `https://agent.docs.automagik.dev` (decision 22), recorded once as `GATEWAY_ORIGIN` in `vite.config.ts`. Pre-cutover site: `https://automagik-docs.<account>.workers.dev` (account workers.dev subdomain `<account>`).
 - Workers Paid is required and approved (the owner, 2026-10-04).
 - No secret in git, CI logs, command lines or repository files; secrets reach `wrangler secret put` on stdin from bws. No job that runs PR code holds a secret. There are no repository secrets; the deploy token lives only in Environment `production`.
 - A change that alters the generated deploy config (`wrangler.jsonc`, the Cloudflare Vite plugin, wrangler or the build entry) regenerates `scripts/expected-wrangler.json` with `node scripts/check-deploy-config.mjs . --write` in the same PR; the `build` job's drift check fails otherwise.
@@ -207,12 +207,12 @@ node -e 'const p=require("./package.json");const d={...p.dependencies,...p.devDe
 
 **Deliverables:**
 1. Preconditions, before the first deploy:
-   - The owner: Workers Paid, approved on 2026-10-04 and being activated through his browser agent (decision 21); the orchestrator confirms it is active on "Felipehowit@gmail.com's Account";
+   - The owner: Workers Paid, approved on 2026-10-04 and being activated through the owner's browser agent (decision 21); the orchestrator confirms it is active on the owner's Cloudflare account;
    - The owner: the CI token, Account › Workers Scripts › Edit with no zone scope, stored in bws as `CLOUDFLARE_DOCS_CI_TOKEN` (decision 16);
    - orchestrator: secrets `CLOUDFLARE_API_TOKEN` (from bws) and `CLOUDFLARE_ACCOUNT_ID` on Environment `production` only; the `main` protection and the Environment with its `main`-only branch policy are already in place (decision 24).
 2. `.github/workflows/site.yml`, triggered on `pull_request` and `push` to `main`; `permissions: contents: read`; one concurrency group per ref; third-party actions pinned by commit SHA; every checkout with `persist-credentials: false`:
    - `build` (references no secret): checkout, setup-node 24 with npm cache, `npm ci`, `npm run build`, `node scripts/check-deploy-config.mjs .`, `npm run verify`, then upload `dist/` only as artifact `site-dist` with `actions/upload-artifact`, `include-hidden-files: true` (keeps `dist/client/.assetsignore`) and `if-no-files-found: error`;
-   - `deploy` (needs `build`; push to `main` only; `environment: production`): checkout, setup-node 24, download `site-dist` to `$RUNNER_TEMP/site/dist`, `node scripts/check-deploy-config.mjs "$RUNNER_TEMP/site"`, then in that directory `npx --yes wrangler@4.147.0 deploy --name automagik-docs` with the two environment secrets, then wait for `https://automagik-docs.felipehowit.workers.dev/genie` and run `node scripts/verify-site.mjs https://automagik-docs.felipehowit.workers.dev`;
+   - `deploy` (needs `build`; push to `main` only; `environment: production`): checkout, setup-node 24, download `site-dist` to `$RUNNER_TEMP/site/dist`, `node scripts/check-deploy-config.mjs "$RUNNER_TEMP/site"`, then in that directory `npx --yes wrangler@4.147.0 deploy --name automagik-docs` with the two environment secrets, then wait for `https://automagik-docs.<account>.workers.dev/genie` and run `node scripts/verify-site.mjs https://automagik-docs.<account>.workers.dev`;
    - no other job, no `pull_request_target`, no preview command.
 3. `scripts/check-deploy-config.mjs <site-dir> [--write]` (Node 22 or later, no dependencies) and `scripts/expected-wrangler.json`: before a deploy it refuses unless `<site-dir>/dist/rsc/wrangler.json` is the Cloudflare plugin's exact compact JSON and, minus the build machine's two absolute paths, equals the expected copy; then it writes `<site-dir>/.wrangler/deploy/config.json` itself (`{ "configPath": "../../dist/rsc/wrangler.json", "auxiliaryWorkers": [] }`). `--write` regenerates the expected copy after a fresh `npm run build`.
 

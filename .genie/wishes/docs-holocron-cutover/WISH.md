@@ -13,7 +13,7 @@
 
 ## Summary
 
-Moves mikro's pages to `/mikro/...`, proves the holocron site end to end on its workers.dev URL, switches docs.automagik.dev from Mintlify to the `automagik-docs` Worker in one approved call that replaces the Mintlify CNAME, and retires Mintlify after a seven-day soak. Last of five sibling wishes (`docs-holocron`, `docs-holocron-brand`, `docs-holocron-products`, `docs-holocron-chat`, this one). Every DNS and Mintlify action is the owner's or approved by him, with exact instructions and a rollback.
+Moves mikro's pages to `/mikro/...`, proves the holocron site end to end on its workers.dev URL, switches docs.automagik.dev from Mintlify to the `automagik-docs` Worker in one approved call that replaces the Mintlify CNAME, and retires Mintlify after a seven-day soak. Last of five sibling wishes (`docs-holocron`, `docs-holocron-brand`, `docs-holocron-products`, `docs-holocron-chat`, this one). Every DNS and Mintlify action is the owner's or approved by the owner, with exact instructions and a rollback.
 
 ## Scope
 
@@ -61,12 +61,12 @@ Moves mikro's pages to `/mikro/...`, proves the holocron site end to end on its 
 **depends-on:** docs-holocron, docs-holocron-brand, docs-holocron-products, docs-holocron-chat
 **blocks:** none
 
-Starts after `docs-holocron-chat` merges and its Group 3 smoke passes. Group 3 needs the owner at the keyboard or approving each step; schedule it in a window where he can watch the post-checks and roll back.
+Starts after `docs-holocron-chat` merges and its Group 3 smoke passes. Group 3 needs the owner at the keyboard or approving each step; schedule it in a window where the owner can watch the post-checks and roll back.
 
 ## Success Criteria
 
 - [ ] mikro's pages answer 200 at `/mikro/...`, and `/rlmx` URLs answer 404 (owner decision D).
-- [ ] Before cutover, `node scripts/verify-site.mjs https://automagik-docs.felipehowit.workers.dev --full` passes and the owner signs off the screenshots.
+- [ ] Before cutover, `node scripts/verify-site.mjs https://automagik-docs.<account>.workers.dev --full` passes and the owner signs off the screenshots.
 - [ ] The recorded `docs` CNAME values and the prepared rollback steps are in Review Results before the switch.
 - [ ] The switch is one approved call; afterwards docs.automagik.dev answers from the Worker (`server: cloudflare`, no `x-mintlify-client-version`, no `x-vercel-id`), TLS is valid, and `verify-site --full` passes against it.
 - [ ] The first CI deploy after cutover leaves the Custom Domain attached and verifies the live domain.
@@ -164,7 +164,7 @@ node scripts/ui-check.mjs --serve --all
    - Lighthouse per decision 6, scores printed;
    - a missing page (`/genie/does-not-exist`) answers 404 with the site chrome and the pet.
 2. `scripts/shoot.mjs <base-url> <out-dir>`: 1440x900 and 390x844 screenshots of `/genie` (hero settled), `/genie/skills/wish`, the Omni and mikro landings, a page with the chat drawer open after one answer, the product switcher open, and a reduced-motion `/genie`.
-3. Run both against `https://automagik-docs.felipehowit.workers.dev`, append results and Lighthouse scores to Review Results, and ask the owner through the question harness to sign off the screenshots (brand, product logos, hero, pet, closed eyes).
+3. Run both against `https://automagik-docs.<account>.workers.dev`, append results and Lighthouse scores to Review Results, and ask the owner through the question harness to sign off the screenshots (brand, product logos, hero, pet, closed eyes).
 
 **Interfaces:**
 - Consumes: `scripts/verify-site.mjs` with `--gateway-smoke` (from `docs-holocron-chat`), `scripts/ui-check.mjs` (from `docs-holocron-brand` and `docs-holocron-products`), the live Workers from `docs-holocron-chat` Group 3, `GATEWAY_TOKEN` from bws in the environment.
@@ -177,7 +177,7 @@ node scripts/ui-check.mjs --serve --all
 
 **Validation:**
 ```bash
-SITE="https://automagik-docs.felipehowit.workers.dev"
+SITE="https://automagik-docs.<account>.workers.dev"
 npm ci
 npx playwright install chromium
 ( set +x; export GATEWAY_TOKEN="$(bws secret get <DOCS_CHAT_GATEWAY_TOKEN-id> | jq -r .value)"; node scripts/verify-site.mjs "$SITE" --full )
