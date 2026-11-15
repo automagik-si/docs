@@ -13,7 +13,7 @@
   "vars": {
     "DEEPSEEK_MODEL": "deepseek-flash",
     "DAILY_USD_CAP": "10.00",
-    "ALLOWED_DOCS_ORIGINS": "https://docs.automagik.dev,https://automagik-docs.felipehowit.workers.dev"
+    "ALLOWED_DOCS_ORIGINS": "https://docs.automagik.dev"
   },
   // One global bucket bounds bursts; the spend ledger is the real cap.
   "ratelimits": [
