@@ -317,7 +317,7 @@ _The read-only reviewer returns evidence; the invoking orchestrator appends a ti
 ### Group 3 provisioning — 2026-10-04 (orchestrator; owner approval "Pode subir" and cap "$10/dia" through the question harness)
 
 **Secrets and deploy**
-- **Gateway token.** bws secret `DOCS_CHAT_GATEWAY_TOKEN` (id `2bc8c6ac-…`, project KHAL LABS) was created with the Bitwarden Python SDK. The token is 48 random bytes in base64 (64 characters). The value was held only in process memory: never on argv, stdout or disk. `bws secret create` takes the value on argv, and `/proc` on this host has no `hidepid`.
+- **Gateway token.** bws secret `DOCS_CHAT_GATEWAY_TOKEN` (id `<secret-id>`, project `<project>`) was created with the Bitwarden Python SDK. The token is 48 random bytes in base64 (64 characters). The value was held only in process memory: never on argv, stdout or disk. `bws secret create` takes the value on argv, and `/proc` on this host has no `hidepid`.
 - **First deploy.** Run from a clean `git archive` of main `ab1045d`: `wrangler@4.147.0 deploy --domain agent.docs.automagik.dev --var DAILY_USD_CAP:10.00 --secrets-file <(printf …)`. wrangler refuses `secret put` on a Worker that does not exist yet when `secrets.required` is declared, so `GATEWAY_TOKEN` and `DEEPSEEK_API_KEY` went in with the first deploy, through a process-substitution pipe (no file on disk). The values came from bws and `gate-env.sh` in a subshell with tracing off.
   - The Worker `automagik-docs-chat` deployed as version `10565acb`, with the custom domain attached.
   - The settings API shows both values as `secret_text`, and `DAILY_USD_CAP` as `10.00`.
