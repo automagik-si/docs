@@ -73,13 +73,32 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          WRANGLER_OUTPUT_FILE_PATH: ${{ runner.temp }}/wrangler-output.json
         run: npx --yes wrangler@4.147.0 deploy --name automagik-docs
-      - run: |
-          curl -fsS --retry 10 --retry-delay 6 --retry-all-errors -o /dev/null https://automagik-docs.felipehowit.workers.dev/genie
+      # wrangler looks the account's workers.dev subdomain up at deploy time and lists the URLs it
+      # published in its output file, so the host is never written here. Probe only when that list
+      # holds exactly one workers.dev URL and it is this Worker's https://automagik-docs.<sub>.workers.dev.
+      - id: workers-dev
+        run: |
+          out="$RUNNER_TEMP/wrangler-output.json"
+          refuse() { echo "::error::$1; probing nothing"; exit 1; }
+          [ -s "$out" ] || refuse "wrangler wrote no output file"
+          urls=$(jq -cn '[inputs | select(.type == "deploy") | .targets[]? | strings | select(contains("workers.dev"))]' "$out") ||
+            refuse "the wrangler output file is not JSON lines"
+          count=$(jq length <<<"$urls")
+          [ "$count" -eq 1 ] || refuse "wrangler reported $count workers.dev targets, not exactly one"
+          url=$(jq -r '.[0]' <<<"$urls")
+          [[ "$url" =~ ^https://automagik-docs\.[a-z0-9-]+\.workers\.dev$ ]] ||
+            refuse "the workers.dev target is not https://automagik-docs.<sub>.workers.dev"
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+      - env:
+          SITE: ${{ steps.workers-dev.outputs.url }}
+        run: |
+          curl -fsS --retry 10 --retry-delay 6 --retry-all-errors -o /dev/null "$SITE/genie"
           # While a deploy rolls out, requests are answered by the previous or the new version, so a
           # page and its hashed assets can come from different versions and 404. Retry across that window.
           for attempt in 1 2 3 4 5 6; do
-            node scripts/verify-site.mjs https://automagik-docs.felipehowit.workers.dev && exit 0
+            node scripts/verify-site.mjs "$SITE" && exit 0
             [ "$attempt" -lt 6 ] || break
             echo "verify-site: attempt $attempt failed, retrying in 15s"
             sleep 15
